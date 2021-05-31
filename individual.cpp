@@ -218,7 +218,7 @@ void Individual::fillRhombusWarehouse(double leftLegA,  double rightLegA, double
         j--;
 
         if(maxWareHeightInRow + ( rowCount%2==0? hallwayWidth : 0 ) + currentY > warehouseHeight || maxRowWidth < wares[i].width + hallwayWidth)
-        { break;
+        {
             currentY = wares[i-1].y;
             int k=1;
             while(wares[i-k].y==currentY)
