@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cstdio>
+#include<time.h>
 
 #include "point.h"
 #include "Ware.h"
@@ -37,6 +38,7 @@ public:
     void shuffle();
     void fillRectangleWarehouse(int warehouseWidth, int warehouseHeight, int hallwayWidth);
     void fillTriangleWarehouse(double leftLegA,  double rightLegA, double rightLegB, int hallwayWidth);
+    void fillRhombusWarehouse(double leftLegA,  double rightLegA, double rightLegB, int hallwayWidth,double warehouseHeight );
 };
 
 

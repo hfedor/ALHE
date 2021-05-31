@@ -7,6 +7,9 @@
 #include <algorithm>
 #include "Ware.h"
 #include "individual.h"
+#include "trianglewarehouse.h"
+#include "rectanglewarehouse.h"
+#include "rhombuswarehouse.h"
 
 #include <vector>
 
@@ -83,12 +86,34 @@ MainWindow::MainWindow(QWidget *parent)
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
-      Individual p;
-      p.initTestSet1x1(100);
-      p.fillTriangleWarehouse(3,-1,20,2);
 
+
+    int populationSize = 40;
+        int lambda = 70;
+        int generationCount = 1000;
+        int mutateBySwapRate = 10;
+        int mutateByRotationRate = 10;
+
+      Individual p;
+      p.initRandom(60);
+      std::vector<Individual> population;
+
+      //RectangleWarehouse rectangleWarehouse (30,40,3);
+      //population= rectangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+
+
+      RhombusWarehouse rhombusWarehouse (3,-1,40,2,32);
+      population = rhombusWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+
+
+
+      //p.fillTriangleWarehouse(3,-1,20,2);
+       // p.fillRectangleWarehouse(20,23,2);
+
+     // p.fillRhombusWarehouse(3,-1,25,2,12);
       std::vector<Point> points;
-      points = p.GetVerticles();
+  //    points = p.GetVerticles();
+      points = population[0].GetVerticles();
 
     QPolygonF polygon;
 
@@ -97,11 +122,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     magazine = scene->addPolygon(polygon, outlinePen, blueBrush);
 
-    std::vector<Ware> wares = p.GetWares();
+    std::vector<Ware> wares = population[0].GetWares();
 
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
-        if((*i).x >= 0)
-                scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).height, 20*(*i).width), outlinePen, greenBrush);
+    { if((*i).x >= 0)
+        {
+            scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, greenBrush);
+        }
+    }
+
+
+    std::cout<<"hello";
 }
 
 MainWindow::~MainWindow()

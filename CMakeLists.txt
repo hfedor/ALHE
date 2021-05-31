@@ -38,6 +38,12 @@ set(PROJECT_SOURCES
         Ware.cpp
         Point.h
         Point.cpp
+        rectanglewarehouse.h
+        rectanglewarehouse.cpp
+        rhombuswarehouse.h
+        rhombuswarehouse.cpp
+        trianglewarehouse.h
+        trianglewarehouse.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
