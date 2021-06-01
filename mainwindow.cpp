@@ -162,7 +162,8 @@ void MainWindow::on_pushButton_clicked()
     int C = std::atof(ui->LineEditC->text().toStdString().c_str());
 
       Individual p;
-      p.initTestSet1x1(100);
+      //p.initTestSet1x1(100);
+      p.initRandom(60);
       p.fillTriangleWarehouse(A,B,C,2);
 
       std::vector<Point> points;
@@ -177,7 +178,11 @@ void MainWindow::on_pushButton_clicked()
 
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
         if((*i).x >= 0)
-                scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).height, 20*(*i).width), outlinePen, greenBrush);
+        {
+            QGraphicsRectItem *ware;
+            ware = scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, greenBrush);
+            ware->setFlag(QGraphicsItem::ItemIsMovable);
+        }
 }
 
 
@@ -208,6 +213,6 @@ void MainWindow::on_pushButton_2_clicked()
 
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
         if((*i).x >= 0)
-                scene->addRect(QRect(5*(*i).x, 5*(*i).y, 5*(*i).height, 5*(*i).width), outlinePen, greenBrush);
+                scene->addRect(QRect(5*(*i).x, 5*(*i).y, 5*(*i).getActualHeight(), 5*(*i).getActualWidth()), outlinePen, greenBrush);
 }
 

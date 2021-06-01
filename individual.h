@@ -22,7 +22,7 @@ private:
     double waresArea=0;
 
     bool contains(std::vector<Ware> vector,int id);
-    bool isPointInsideTriangle(int x,int y, double leftLegA, double leftLegB, double rightLegA, double rightLegB);
+    bool isPointInsideTriangle(double x,double y, double leftLegA, double leftLegB, double rightLegA, double rightLegB);
 public:
     std::vector<Point> GetVerticles() { return vertices; }
     std::vector<Ware> GetWares() { return wares; }
