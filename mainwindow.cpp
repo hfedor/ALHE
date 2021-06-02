@@ -99,14 +99,14 @@ MainWindow::MainWindow(QWidget *parent)
       std::vector<Individual> population;
 
      // RectangleWarehouse rectangleWarehouse (30,40,3);
-     // population= rectangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+     // population= rectangleWarehouse.calculateMiLambda(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
 
-     RhombusWarehouse rhombusWarehouse (3,-1,40,4,22);
-      population = rhombusWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+    // RhombusWarehouse rhombusWarehouse (3,-1,40,4,22);
+     // population = rhombusWarehouse.calculateMiPlusLambda(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
-        //TriangleWarehouse triangleWarehouse (3,-1,35,2);
-        //population = triangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+        TriangleWarehouse triangleWarehouse (3,-1,35,2);
+        population = triangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
 
 
