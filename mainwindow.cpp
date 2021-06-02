@@ -86,6 +86,20 @@ MainWindow::MainWindow(QWidget *parent)
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
+    ui->tableWidget->setColumnCount(3);
+
+    QTableWidgetItem *header1 = new QTableWidgetItem();
+    header1->setText("Liczba");
+     ui->tableWidget->setHorizontalHeaderItem(0,header1);
+
+     QTableWidgetItem *header2 = new QTableWidgetItem();
+     header2->setText("Wysokość");
+      ui->tableWidget->setHorizontalHeaderItem(1,header2);
+
+      QTableWidgetItem *header3 = new QTableWidgetItem();
+      header3->setText("Szerokość");
+       ui->tableWidget->setHorizontalHeaderItem(2,header3);
+
 
 
     int populationSize = 40;
@@ -106,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent)
      // population = rhombusWarehouse.calculateMiPlusLambda(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
         TriangleWarehouse triangleWarehouse (3,-1,35,2);
-        population = triangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+        population = triangleWarehouse.calculateMiPlusLambda(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
 
 
@@ -174,9 +188,9 @@ void MainWindow::on_pushButton_clicked()
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
-    int A = std::atof(ui->LineEditA->text().toStdString().c_str());
-    int B = std::atof(ui->LineEditB->text().toStdString().c_str());
-    int C = std::atof(ui->LineEditC->text().toStdString().c_str());
+   /* int A = std::atof(ui->LineEdit->text().toStdString().c_str());
+    int B = std::atof(ui->LineEdit->text().toStdString().c_str());
+    int C = std::atof(ui->LineEdit->text().toStdString().c_str());
 
       Individual p;
       p.initTestSet1x1(100);
@@ -194,7 +208,7 @@ void MainWindow::on_pushButton_clicked()
 
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
         if((*i).x >= 0)
-                scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).height, 20*(*i).width), outlinePen, greenBrush);
+                scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).height, 20*(*i).width), outlinePen, greenBrush);*/
 }
 
 
@@ -226,5 +240,72 @@ void MainWindow::on_pushButton_2_clicked()
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
         if((*i).x >= 0)
                 scene->addRect(QRect(5*(*i).x, 5*(*i).y, 5*(*i).height, 5*(*i).width), outlinePen, greenBrush);
+}
+
+
+
+
+
+
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    int count = std::atof(ui->waresCountForm->text().toStdString().c_str());
+    int width = std::atof(ui->wareWidthForm->text().toStdString().c_str());
+    int height = std::atof(ui->wareHeightForm->text().toStdString().c_str());
+
+    if(count <1 || width <1 || height <1) return;
+
+    for (int i =0;i< count ; i++)
+    {
+        Ware ware(waresFromUser.size(),(double)width,(double)height);
+
+        waresFromUser.push_back(ware);
+    }
+    this->ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
+    QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(count),0);
+    ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 0, newItem);
+    QTableWidgetItem *newItem2 = new QTableWidgetItem(QString::number(height),0);
+    ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 1, newItem2);
+    QTableWidgetItem *newItem3 = new QTableWidgetItem(QString::number(width),0);
+    ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 2, newItem3);
+}
+
+
+void MainWindow::on_generateButton_clicked()
+{
+    ui->graphicsView->scene()->clear();
+
+    QPolygonF polygon;
+
+    QBrush greenBrush(Qt::green);
+    QBrush blueBrush(Qt::blue);
+    QPen outlinePen(Qt::black);
+    outlinePen.setWidth(2);
+
+    int rectangleWarehouseWidthForm = std::atof(ui-> rectangleWarehouseWidthForm->text().toStdString().c_str());
+    int rectangleWarehouseHeightForm = std::atof(ui-> rectangleWarehouseHeightForm->text().toStdString().c_str());
+    int triangleWarehouseLeftLegAForm = std::atof(ui-> triangleWarehouseLeftLegAForm->text().toStdString().c_str());
+    int triangleWarehouseRightLegAForm = std::atof(ui-> triangleWarehouseRightLegAForm->text().toStdString().c_str());
+    int triangleWarehouseRightLegBForm = std::atof(ui-> triangleWarehouseRightLegBForm->text().toStdString().c_str());
+    int rhombusWarehouseLeftLegAForm = std::atof(ui-> rhombusWarehouseLeftLegAForm->text().toStdString().c_str());
+    int rhombusWarehouseRightLegAForm = std::atof(ui-> rhombusWarehouseRightLegAForm->text().toStdString().c_str());
+    int rhombusWarehouseRightLegBForm = std::atof(ui-> rhombusWarehouseRightLegBForm->text().toStdString().c_str());
+    int rhombusWarehouseheightForm = std::atof(ui-> rhombusWarehouseheightForm->text().toStdString().c_str());
+    int warehouseHallwayWidthForm = std::atof(ui-> warehouseHallwayWidthForm->text().toStdString().c_str());
+    int generationCountForm = std::atof(ui-> generationCountForm->text().toStdString().c_str());
+    int populationSizeForm = std::atof(ui-> populationSizeForm->text().toStdString().c_str());
+    int lambdaForm = std::atof(ui-> lambdaForm->text().toStdString().c_str());
+    int mutateBySwapRateForm = std::atof(ui-> mutateBySwapRateForm->text().toStdString().c_str());
+    int mutateByRotationRateForm = std::atof(ui-> mutateByRotationRateForm->text().toStdString().c_str());
+    int wareHeightForm = std::atof(ui-> wareHeightForm->text().toStdString().c_str());
+    int waresCountForm = std::atof(ui-> waresCountForm->text().toStdString().c_str());
+    int wareWidthForm = std::atof(ui-> wareWidthForm->text().toStdString().c_str());
+    bool isRandomWaresSetForm = ui->isRandomWaresSetForm->isChecked();
+
+
+
+
 }
 

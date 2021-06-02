@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <vector>
+#include"Ware.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,10 +27,19 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_add_wares_clicked(){};
+
+
+
+    void on_pushButton_3_clicked();
+
+    void on_generateButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     QGraphicsScene *scene;
     QGraphicsPolygonItem *magazine;
+    std:: vector<Ware> waresFromUser;
 };
 #endif // MAINWINDOW_H

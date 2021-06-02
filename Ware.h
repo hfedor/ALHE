@@ -22,6 +22,18 @@ public:
         { return rotate ?   width : height; }
     double getArea()
         { return width * height; }
+    Ware(int id,double width,double height)
+    {
+        this->id = id;
+        this->height = height;
+        this->width = width;
+        this->fitted=false;
+        this->rotate=false;
+        this->x=-1;
+        this->y=-1;
+    }
+    Ware()
+    {}
 };
 
 

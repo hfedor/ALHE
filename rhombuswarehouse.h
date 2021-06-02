@@ -106,6 +106,7 @@ public:
              {
                  lambdaPopulation.push_back(population[rand()%populationSize]);
              }
+              population.erase(population.begin(),population.end());
 
             //reprodukcja
             for(int i =0;i<lambdaPopulation.size();i++)
