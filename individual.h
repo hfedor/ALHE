@@ -6,6 +6,7 @@
 #define UNTITLED3_INDIVIDUAL_H
 
 #include <vector>
+#include<iostream>
 #include <cstdlib>
 #include <cmath>
 #include <cstdio>
@@ -39,6 +40,14 @@ public:
     void fillRectangleWarehouse(int warehouseWidth, int warehouseHeight, int hallwayWidth);
     void fillTriangleWarehouse(double leftLegA,  double rightLegA, double rightLegB, int hallwayWidth);
     void fillRhombusWarehouse(double leftLegA,  double rightLegA, double rightLegB, int hallwayWidth,double warehouseHeight );
+
+    double calcActualMaxWidth(double leftLegA, double rightLegA, double rightLegB, int hallwayWidth, int currentY,
+                                  int maxWareHeightInRow) const {
+            double left =/* floor*/((currentY + maxWareHeightInRow - rightLegB) / rightLegA);
+            double right =/*ceil*/((currentY + maxWareHeightInRow ) / leftLegA );
+            double actualMaxWidth = left - right -  hallwayWidth;
+            return actualMaxWidth;
+        }
 };
 
 

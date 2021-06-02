@@ -95,30 +95,35 @@ MainWindow::MainWindow(QWidget *parent)
         int mutateByRotationRate = 10;
 
       Individual p;
-      p.initRandom(60);
+      p.initRandom(120);
       std::vector<Individual> population;
 
-      //RectangleWarehouse rectangleWarehouse (30,40,3);
-      //population= rectangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
+     // RectangleWarehouse rectangleWarehouse (30,40,3);
+     // population= rectangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
 
-      RhombusWarehouse rhombusWarehouse (3,-1,40,2,32);
+     RhombusWarehouse rhombusWarehouse (3,-1,40,4,22);
       population = rhombusWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
+        //TriangleWarehouse triangleWarehouse (3,-1,35,2);
+        //population = triangleWarehouse.calculate(populationSize,lambda,generationCount,mutateBySwapRate,mutateByRotationRate,p);
 
 
-      //p.fillTriangleWarehouse(3,-1,20,2);
+
+
+      //p.fillTriangleWarehouse(3,-1,35,2);
        // p.fillRectangleWarehouse(20,23,2);
 
-     // p.fillRhombusWarehouse(3,-1,25,2,12);
+     // p.fillRhombusWarehouse(3,-1,40,2,28);
       std::vector<Point> points;
+      //population.push_back(p);
   //    points = p.GetVerticles();
       points = population[0].GetVerticles();
 
     QPolygonF polygon;
 
     for(std::vector<Point>::iterator i = points.begin(); i != points.end(); i++)
-        polygon << QPointF(float(20*(*i).GetX()), float(20*(*i).GetY()));
+        polygon << QPointF(float(20*(*i).GetX()), float(-20*(*i).GetY()));
 
     magazine = scene->addPolygon(polygon, outlinePen, blueBrush);
 
@@ -127,12 +132,24 @@ MainWindow::MainWindow(QWidget *parent)
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
     { if((*i).x >= 0)
         {
-            scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, greenBrush);
+            scene->addRect(QRect(20*(*i).x, -20*(*i).y, 20*(*i).getActualWidth(), -20*(*i).getActualHeight()), outlinePen, greenBrush);
+            std::cout<<"{id:"<< (*i).id<<" x:"<<(*i).x<<" y:"<<(*i).y<<" width:"<<(*i).getActualWidth()<<" height:"<<(*i).getActualHeight()<<"}"<<std::endl;
+
         }
     }
+   /* for(int i =0; i<wares.size();i++)
+    {
+        std::cout<<wares[i].getActualHeight()<<",";
+    }
+    std::cout<<std::endl;
+    for(int i =0; i<wares.size();i++)
+    {
+        std::cout<<wares[i].getActualWidth()<<",";
+    }
+    std::cout<<std::endl;
 
-
-    std::cout<<"hello";
+    std::cout<<"hello"<<std::endl;
+    //while()*/
 }
 
 MainWindow::~MainWindow()

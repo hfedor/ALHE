@@ -63,9 +63,15 @@ public:
             //obliczanie funkcji przystosowania
             for (Individual &item : population)
             {
-
+                if(j ==99)
+                {
+                    item.fillRhombusWarehouse(leftLegA,rightLegA,rightLegB,hallwayWidth,warehouseHeight);
+                    item.calculateWaresArea();
+                }
+                else
+                {
                 item.fillRhombusWarehouse(leftLegA,rightLegA,rightLegB,hallwayWidth,warehouseHeight);
-                item.calculateWaresArea();
+                item.calculateWaresArea();}
             }
             //sortowanie
             sort(population.begin(), population.end(), Individual::compare);

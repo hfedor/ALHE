@@ -10,8 +10,8 @@ bool  Individual::compare(Individual i1, Individual i2)
 
 void Individual::initTestSet()
 {                   //0,1,2,3,4,5,6,7,8,9,10,11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-    int tabWidth[] = {4,5,5,5,4,5,6,1,9,2, 6, 2, 8, 1, 6, 9, 9, 4, 1, 9, 4, 5, 5, 5, 4, 5, 6, 1, 9, 2, 6, 2, 8, 1, 6, 9, 9, 4, 1, 9};
-    int tabHight[] = {9,4,4,2,8,1,7,3,2,7, 7, 3, 3, 8, 4, 9, 5, 9, 1, 8, 9, 4, 4, 2, 8, 1, 7, 3, 2, 7, 7, 3, 3, 8, 4, 9, 5, 9, 1, 8};
+    int tabWidth[] = {4,5,5,5,4,5,3,1,3,2, 2, 2, 4, 1, 4, 3, 2, 4, 1, 1, 4, 5, 5, 5, 4, 3, 2, 1, 4, 2, 2, 2, 3, 1, 2, 5, 5, 4, 1, 3};
+    int tabHight[] = {2,4,4,2,3,1,2,3,2,3, 5, 3, 3, 2, 4, 3, 5, 2, 1, 4, 5, 4, 4, 2, 2, 1, 3, 3, 2, 1, 3, 3, 3, 4, 4, 2, 5, 2, 1, 3};
     for (int i = 0; i < 40; ++i)
     {
         Ware ware;
@@ -22,18 +22,21 @@ void Individual::initTestSet()
     }
 }
 
+
 void Individual::initTestSet2()
 {
-    int tabWidth[] = {9,9,2,4,9,5,4,6,8,4,2,4,3,5,4,4,5,5,5,4,5,6,1,9,2,6,2,8,1,6,9,9,4,1,9};
-    int tabHight[] = {9,9,7,8,8,9,9,7,9,9,9,9,8,9,9,9,4,4,2,8,1,7,3,2,7,7,3,3,8,4,9,5,9,1,8};
-    for (int i = 0; i < 35; ++i)
-    {
-        Ware ware;
-        ware.id = i;
-        ware.width = tabWidth[i],
-        ware.height =tabHight[i];
-        wares.push_back(ware);
-    }
+    //0,1,2,3,4,5,6,7,8,9,10,11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
+
+       int tabHight[] = {4,4,3,2,3,1,3,3,4,2,4,1,1,3,4,4,1,1,1,2,1,2,4,3,4,3,1,2,3,4,1,1,1,3,2,1,3,2,2,3};
+       int tabWidth[] = {4,4,1,3,3,1,3,1,4,1,3,1,1,4,2,1,1,4,1,3,2,3,1,3,4,3,1,4,4,4,3,4,2,2,3,4,3,4,2,1};
+       for (int i = 0; i < 40; ++i)
+       {
+           Ware ware;
+           ware.id = i;
+           ware.width = tabWidth[i];
+           ware.height =tabHight[i];
+           wares.push_back(ware);
+       }
 }
 void Individual::initTestSet1x1(int n)
 {
@@ -179,8 +182,118 @@ void Individual::fillRhombusWarehouse(double leftLegA,  double rightLegA, double
     double Cy = 0;
     vertices.push_back(Point(Cx,Cy));
 
+    for (Ware &item: wares) {
+        item.y=-1;
+        item.x=-1;
+        item.fitted=false;
+    }
+    //tutaj na inta
+    double currentX =0 , currentY=0;
+    int i=0,rowCount =0;
+    //double warehouseHeight = (leftLegA*rightLegB)/(leftLegA-rightLegA);
 
 
+
+    while (true)
+    {
+        //sprawdzanie maksymalnej dłuości i punktu startowego na aktualnym y
+        // aktualny y jest na dole rzędu
+        double maxRowWidth = (currentY - rightLegB)/rightLegA - currentY/leftLegA ;
+        int j=0,maxWareHeightInRow=0 , rowWidth=0;
+
+        //pobieranie gdyby niebyło skosów
+        while(rowWidth + hallwayWidth + this->wares[i+j].getActualWidth() <= maxRowWidth)
+        {
+            if(i+j>=wares.size()) //checking if there is any left ware
+            {
+                break;
+            }
+
+            rowWidth+=wares[i+j].getActualWidth();
+            if(maxWareHeightInRow<wares[i+j].getActualHeight())
+            {
+                maxWareHeightInRow=wares[i+j].getActualHeight();
+            }
+            j++;
+        }
+        j--;
+        //uwzględnianie skosów dla największego w rzędzie
+        double actualMaxWidth = calcActualMaxWidth(leftLegA, rightLegA, rightLegB, hallwayWidth, currentY,maxWareHeightInRow);
+
+        //tutaj odrzucamy te towary które nie zmieszczą się przez skos
+        while (actualMaxWidth < rowWidth && j>0)
+        {
+            rowWidth-=wares[i+j].getActualWidth();
+            j--;
+            //aktualizacja maxwarehightinrow
+            maxWareHeightInRow=0;
+            for(int k=0;k<j;k++)
+            {
+                if(maxWareHeightInRow<wares[i+k].getActualHeight())
+                {
+                    maxWareHeightInRow=wares[i+k].getActualHeight();
+                }
+            }
+            actualMaxWidth = calcActualMaxWidth(leftLegA, rightLegA, rightLegB, hallwayWidth, currentY,maxWareHeightInRow);
+
+        }
+        //wypełnianie wnęki
+        if(j<=0 || maxWareHeightInRow + ( rowCount%2==0? hallwayWidth : 0 ) + currentY > warehouseHeight )//|| maxWareHeightInRow + hallwayWidth + currentY > warehouseHeight) //gdy się nie zmieści
+        {
+            currentY = wares[i-1].y;
+            int k=1;
+            while(wares[i-k].y==currentY)
+            {
+                k++;
+            }
+            k--;
+            currentX = wares[i-k].x;
+            //sprawdzamy czy wszystkie rogi kolejnego towaru znajdują się w trójkącie
+            //prawego dolnego nie sprawdzam bo już jest towar z tym punktem w magazynie
+            while (rowCount%2==0 && currentY + wares[i].getActualHeight() <= warehouseHeight
+                    && isPointInsideTriangle(currentX-wares[i].getActualWidth(),currentY,leftLegA,0,rightLegA,rightLegB) //lewy dolny
+                    && isPointInsideTriangle(currentX-wares[i].getActualWidth(),currentY+wares[i].getActualHeight(),leftLegA,0,rightLegA,rightLegB)//lewy górny
+                    && isPointInsideTriangle(currentX,currentY+wares[i].getActualHeight(),leftLegA,0,rightLegA,rightLegB)) //prawy górny
+            {
+                wares[i].x=currentX-wares[i].getActualWidth();
+                wares[i].y = currentY;
+                wares[i].fitted= true;
+                currentX = wares[i].x;
+
+                i++;
+            }
+
+            break;
+        }
+        //tutaj obliczmy gdzie ma się zaczynać rząd           //       tutaj zakomentowane
+        //reszta tak jak w prostokącie
+        currentX = /*(int) ceil*/(hallwayWidth+ (currentY + maxWareHeightInRow) / leftLegA);
+        for(int k =0;k<j;k++)
+        {
+            wares[i].x=currentX;
+            wares[i].y = currentY;
+            if(rowCount % 2==0)
+            {
+               wares[i].y+=maxWareHeightInRow-wares[i].getActualHeight();
+            }
+            wares[i].fitted= true;
+
+            currentX+=wares[i].getActualWidth();
+            i++;
+        }
+        rowCount++;
+
+        currentY+= maxWareHeightInRow;
+        if(rowCount%2==1) currentY +=  hallwayWidth;
+
+        currentX=0;
+
+
+    }
+
+
+
+/*
     // początkowo wszystkie produkty sa poza magazynem
     for (Ware &item: wares) {
         item.y=-1;
@@ -260,7 +373,7 @@ void Individual::fillRhombusWarehouse(double leftLegA,  double rightLegA, double
         currentY+= maxWareHeightInRow;
         if(rowCount%2==1)
             currentY +=  hallwayWidth;
-    }
+    }*/
 }
 
 
@@ -277,6 +390,135 @@ void Individual::fillRhombusWarehouse(double leftLegA,  double rightLegA, double
 void Individual::fillTriangleWarehouse(double leftLegA,  double rightLegA, double rightLegB, int hallwayWidth)
 {
     if(rightLegA >=0) return;
+
+    vertices.clear(); // czyszczenie poprzednich wierzchołków
+
+    // punkt przecięcia podstawy i lewego boku
+    double Ax = 0;
+    double Ay = 0;
+    vertices.push_back(Point(Ax,Ay));
+
+    // punkt przecięcia lewego i prawego boku
+    double Bx = rightLegB / ( leftLegA - rightLegA ) ;
+    double By = leftLegA * Bx;
+    vertices.push_back(Point(Bx,By));
+
+    // punkt przecięcia podstawy i prawego boku
+    double Cx = - rightLegB / rightLegA;
+    double Cy = 0;
+    vertices.push_back(Point(Cx,Cy));
+
+            for (Ware &item: wares) {
+                item.y=-1;
+                item.x=-1;
+                item.fitted=false;
+            }
+            //tutaj na inta
+            double currentX =0 , currentY=0;
+            int i=0,rowCount =0;
+            double warehouseHeight = (leftLegA*rightLegB)/(leftLegA-rightLegA);
+
+
+
+            while (true)
+            {
+                //sprawdzanie maksymalnej dłuości i punktu startowego na aktualnym y
+                // aktualny y jest na dole rzędu
+                double maxRowWidth = (currentY - rightLegB)/rightLegA - currentY/leftLegA ;
+                int j=0,maxWareHeightInRow=0 , rowWidth=0;
+
+                //pobieranie gdyby niebyło skosów
+                while(rowWidth + hallwayWidth + this->wares[i+j].getActualWidth() <= maxRowWidth)
+                {
+                    if(i+j>=wares.size()) //checking if there is any left ware
+                    {
+                        break;
+                    }
+
+                    rowWidth+=wares[i+j].getActualWidth();
+                    if(maxWareHeightInRow<wares[i+j].getActualHeight())
+                    {
+                        maxWareHeightInRow=wares[i+j].getActualHeight();
+                    }
+                    j++;
+                }
+                j--;
+                //uwzględnianie skosów dla największego w rzędzie
+                double actualMaxWidth = calcActualMaxWidth(leftLegA, rightLegA, rightLegB, hallwayWidth, currentY,maxWareHeightInRow);
+
+                //tutaj odrzucamy te towary które nie zmieszczą się przez skos
+                while (actualMaxWidth < rowWidth && j>0)
+                {
+                    rowWidth-=wares[i+j].getActualWidth();
+                    j--;
+                    //aktualizacja maxwarehightinrow
+                    maxWareHeightInRow=0;
+                    for(int k=0;k<j;k++)
+                    {
+                        if(maxWareHeightInRow<wares[i+k].getActualHeight())
+                        {
+                            maxWareHeightInRow=wares[i+k].getActualHeight();
+                        }
+                    }
+                    actualMaxWidth = calcActualMaxWidth(leftLegA, rightLegA, rightLegB, hallwayWidth, currentY,maxWareHeightInRow);
+
+                }
+                //wypełnianie wnęki
+                if(j<=0 )//|| maxWareHeightInRow + hallwayWidth + currentY > warehouseHeight) //gdy się nie zmieści
+                {
+                    currentY = wares[i-1].y;
+                    int k=1;
+                    while(wares[i-k].y==currentY)
+                    {
+                        k++;
+                    }
+                    k--;
+                    currentX = wares[i-k].x;
+                    //sprawdzamy czy wszystkie rogi kolejnego towaru znajdują się w trójkącie
+                    //prawego dolnego nie sprawdzam bo już jest towar z tym punktem w magazynie
+                    while (rowCount%2==0
+                            && isPointInsideTriangle(currentX-wares[i].getActualWidth(),currentY,leftLegA,0,rightLegA,rightLegB) //lewy dolny
+                            && isPointInsideTriangle(currentX-wares[i].getActualWidth(),currentY+wares[i].getActualHeight(),leftLegA,0,rightLegA,rightLegB)//lewy górny
+                            && isPointInsideTriangle(currentX,currentY+wares[i].getActualHeight(),leftLegA,0,rightLegA,rightLegB)) //prawy górny
+                    {
+                        wares[i].x=currentX-wares[i].getActualWidth();
+                        wares[i].y = currentY;
+                        wares[i].fitted= true;
+                        currentX = wares[i].x;
+
+                        i++;
+                    }
+
+                    break;
+                }
+                //tutaj obliczmy gdzie ma się zaczynać rząd           //       tutaj zakomentowane
+                //reszta tak jak w prostokącie
+                currentX = /*(int) ceil*/(hallwayWidth+ (currentY + maxWareHeightInRow) / leftLegA);
+                for(int k =0;k<j;k++)
+                {
+                    wares[i].x=currentX;
+                    wares[i].y = currentY;
+                    if(rowCount % 2==0)
+                    {
+                       wares[i].y+=maxWareHeightInRow-wares[i].getActualHeight();
+                    }
+                    wares[i].fitted= true;
+
+                    currentX+=wares[i].getActualWidth();
+                    i++;
+                }
+                rowCount++;
+
+                currentY+= maxWareHeightInRow;
+                if(rowCount%2==1) currentY +=  hallwayWidth;
+
+                currentX=0;
+
+
+            }
+
+
+   /* if(rightLegA >=0) return;
 
     vertices.clear(); // czyszczenie poprzednich wierzchołków
 
@@ -331,8 +573,9 @@ void Individual::fillTriangleWarehouse(double leftLegA,  double rightLegA, doubl
         }
         j--;
 
-        if(maxWareHeightInRow + ( rowCount%2==0? hallwayWidth : 0 ) + currentY > warehouseHeight || maxRowWidth < wares[i].width + ( rowCount%2==0? hallwayWidth : 0 ))
+        if(maxWareHeightInRow + ( rowCount%2==0? hallwayWidth : 0 ) + currentY > warehouseHeight || maxRowWidth < wares[i].width +  hallwayWidth )
         {
+
             currentY = wares[i-1].y;
             int k=1;
             while(wares[i-k].y==currentY)
@@ -374,7 +617,7 @@ void Individual::fillTriangleWarehouse(double leftLegA,  double rightLegA, doubl
         currentY+= maxWareHeightInRow;
         if(rowCount%2==1)
             currentY +=  hallwayWidth;
-    }
+    }*/
 
     /*int currentX =0 , currentY=0, i=0,rowCount =0;
             double warehouseHeight = (leftLegA*rightLegB)/(leftLegA-rightLegA);
@@ -537,7 +780,13 @@ void Individual::fillRectangleWarehouse(int warehouseWidth, int warehouseHeight,
             while ( rowCount % 2==0 && currentX + wares[i].getActualWidth() <= warehouseWidth && currentY + wares[i].getActualHeight() <= warehouseHeight)
             {
                 wares[i].x=currentX;
-                wares[i].y = currentY;
+                 wares[i].y = currentY;
+                if(rowCount % 2==0)
+                {
+                   wares[i].y+=maxWareHeightInRow-wares[i].getActualHeight();
+                }
+
+
                 wares[i].fitted= true;
                 currentX+=wares[i].getActualWidth();
 
@@ -549,6 +798,10 @@ void Individual::fillRectangleWarehouse(int warehouseWidth, int warehouseHeight,
         {
             wares[i].x=currentX;
             wares[i].y = currentY;
+            if(rowCount % 2==0)
+            {
+               wares[i].y+=maxWareHeightInRow-wares[i].getActualHeight();
+            }
             wares[i].fitted= true;
 
             currentX+=wares[i].getActualWidth();
