@@ -19,10 +19,19 @@ class RectangleWarehouse {
     int warehouseWidth;
     int warehouseHeight;
     int hallwayWidth;
+
+
+
+
+
+
 public:
     RectangleWarehouse(int warehouseWidth, int warehouseHeight, int hallwayWidth) : warehouseWidth(warehouseWidth),
                                                                                     warehouseHeight(warehouseHeight),
                                                                                     hallwayWidth(hallwayWidth) {}
+
+
+
 
 
 
@@ -40,6 +49,8 @@ public:
         population = shuffle(population);
         for (int j = 0; j < generationCount; ++j)
         {
+
+
              vector<Individual> lambdaPopulation;
              //losowanie populacji lambda
              for(int i =0;i<lambda;i++)

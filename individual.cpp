@@ -781,10 +781,10 @@ void Individual::fillRectangleWarehouse(int warehouseWidth, int warehouseHeight,
             {
                 wares[i].x=currentX;
                  wares[i].y = currentY;
-                if(rowCount % 2==0)
+                /*if(rowCount % 2==0)
                 {
                    wares[i].y+=maxWareHeightInRow-wares[i].getActualHeight();
-                }
+                }*/
 
 
                 wares[i].fitted= true;

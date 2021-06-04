@@ -35,6 +35,10 @@ private slots:
 
     void on_generateButton_clicked();
 
+
+
+
+
 private:
     Ui::MainWindow *ui;
 

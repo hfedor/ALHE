@@ -20,12 +20,15 @@
       <x>0</x>
       <y>1</y>
       <width>1241</width>
-      <height>621</height>
+      <height>639</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinAndMaxSize</enum>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
      </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -51,9 +54,9 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="rectangleWarehouseTab">
           <attribute name="title">
            <string>Prostokąt</string>
           </attribute>
@@ -116,7 +119,7 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab_2">
+         <widget class="QWidget" name="triangleWarehouseTab">
           <attribute name="title">
            <string>Trójkąt</string>
           </attribute>
@@ -163,7 +166,7 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab_3">
+         <widget class="QWidget" name="rhombusWarehouseTab">
           <attribute name="title">
            <string>Trapez</string>
           </attribute>
@@ -316,7 +319,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="algorithmSelectionComboBox">
          <item>
           <property name="text">
            <string>Mi Plus Lambda</string>
@@ -417,6 +420,13 @@
         <widget class="QPushButton" name="generateButton">
          <property name="text">
           <string>Generuj Rozwiązanie</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="resultLabel">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>

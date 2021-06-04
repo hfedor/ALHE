@@ -102,7 +102,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    int populationSize = 40;
+
+
+
+
+   /* int populationSize = 40;
         int lambda = 70;
         int generationCount = 1000;
         int mutateBySwapRate = 10;
@@ -126,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
       //p.fillTriangleWarehouse(3,-1,35,2);
-       // p.fillRectangleWarehouse(20,23,2);
+        p.fillRectangleWarehouse(20,23,2);
 
      // p.fillRhombusWarehouse(3,-1,40,2,28);
       std::vector<Point> points;
@@ -147,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
     { if((*i).x >= 0)
         {
             scene->addRect(QRect(20*(*i).x, -20*(*i).y, 20*(*i).getActualWidth(), -20*(*i).getActualHeight()), outlinePen, greenBrush);
-            std::cout<<"{id:"<< (*i).id<<" x:"<<(*i).x<<" y:"<<(*i).y<<" width:"<<(*i).getActualWidth()<<" height:"<<(*i).getActualHeight()<<"}"<<std::endl;
+            //std::cout<<"{id:"<< (*i).id<<" x:"<<(*i).x<<" y:"<<(*i).y<<" width:"<<(*i).getActualWidth()<<" height:"<<(*i).getActualHeight()<<"}"<<std::endl;
 
         }
     }
@@ -284,6 +288,7 @@ void MainWindow::on_generateButton_clicked()
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
+
     int rectangleWarehouseWidthForm = std::atof(ui-> rectangleWarehouseWidthForm->text().toStdString().c_str());
     int rectangleWarehouseHeightForm = std::atof(ui-> rectangleWarehouseHeightForm->text().toStdString().c_str());
     int triangleWarehouseLeftLegAForm = std::atof(ui-> triangleWarehouseLeftLegAForm->text().toStdString().c_str());
@@ -302,10 +307,130 @@ void MainWindow::on_generateButton_clicked()
     int wareHeightForm = std::atof(ui-> wareHeightForm->text().toStdString().c_str());
     int waresCountForm = std::atof(ui-> waresCountForm->text().toStdString().c_str());
     int wareWidthForm = std::atof(ui-> wareWidthForm->text().toStdString().c_str());
+    int randomWaresSetCount = std::atof(ui-> randomWaresSetCount->text().toStdString().c_str());
     bool isRandomWaresSetForm = ui->isRandomWaresSetForm->isChecked();
 
 
 
+
+
+    ///////////////////////////////////////////
+    ///
+    Individual p;
+    //ustalanie towarów
+    if(isRandomWaresSetForm && randomWaresSetCount>0)
+    {
+        p.initRandom(randomWaresSetCount);
+    }
+    else if(waresFromUser.size()>0)
+    {
+       p.setWares(waresFromUser);
+    }
+    else
+    {
+        return;
+    }
+
+
+    /*
+     * rectangle - 0
+     * triangle -1;
+     * rhombus -2
+     *
+    */
+    int selectedWarehouseShape = ui->tabWidget->currentIndex();
+    int algorithmSelectionIndex  = ui->algorithmSelectionComboBox->currentIndex();
+
+    std::vector<Individual> population;
+    double warehouseArea =0;
+
+    if(selectedWarehouseShape == 0)
+    {
+        RectangleWarehouse rectangleWarehouse (rectangleWarehouseWidthForm,rectangleWarehouseHeightForm,warehouseHallwayWidthForm);
+        warehouseArea = rectangleWarehouseWidthForm*rectangleWarehouseHeightForm;
+
+        if(algorithmSelectionIndex ==0)
+        {
+            population =rectangleWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }else if(algorithmSelectionIndex ==1)
+        {
+            population =rectangleWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }
+        else { return;}
+    }
+    else if (selectedWarehouseShape ==1)
+    {
+        TriangleWarehouse triangleWarehouse (triangleWarehouseLeftLegAForm,triangleWarehouseRightLegAForm,triangleWarehouseRightLegBForm,warehouseHallwayWidthForm);
+        double Bx = triangleWarehouseRightLegBForm / ( triangleWarehouseLeftLegAForm - triangleWarehouseRightLegAForm ) ;
+        double By = triangleWarehouseLeftLegAForm * Bx;
+         warehouseArea = (-1*triangleWarehouseRightLegBForm/triangleWarehouseRightLegAForm) * By /2.0;
+
+        if(algorithmSelectionIndex ==0)
+        {
+            population =triangleWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }else if(algorithmSelectionIndex ==1)
+        {
+            population =triangleWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }
+        else { return;}
+    }
+    else if (selectedWarehouseShape ==2)
+    {
+        RhombusWarehouse rhombusWarehouse (rhombusWarehouseLeftLegAForm,rhombusWarehouseRightLegAForm,rhombusWarehouseRightLegBForm,warehouseHallwayWidthForm,rhombusWarehouseheightForm);
+
+        double Bx = rhombusWarehouseheightForm /  rhombusWarehouseLeftLegAForm ;
+        double By = rhombusWarehouseheightForm;
+
+        // punkt przecięcia prawego boku i górnej podstawy
+
+        double Dx = (rhombusWarehouseheightForm -rhombusWarehouseRightLegBForm) /  rhombusWarehouseRightLegAForm ;
+        double Dy = rhombusWarehouseheightForm;
+
+
+        // punkt przecięcia podstawy i prawego boku
+        double Cx = - rhombusWarehouseRightLegBForm / rhombusWarehouseRightLegAForm;
+        double Cy = 0;
+
+        warehouseArea = (Cx + Dx-Bx) * rhombusWarehouseheightForm /2.0;
+
+        if(algorithmSelectionIndex ==0)
+        {
+            population =rhombusWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }else if(algorithmSelectionIndex ==1)
+        {
+            population =rhombusWarehouse.calculateMiPlusLambda(populationSizeForm,lambdaForm,generationCountForm,mutateBySwapRateForm,mutateByRotationRateForm,p);
+        }
+        else { return;}
+    }
+    else
+    {
+        return;
+    }
+
+    std::vector<Point> points;
+    points = population[0].GetVerticles();
+    //rysowanie magazynu
+    for(std::vector<Point>::iterator i = points.begin(); i != points.end(); i++)
+        polygon << QPointF(float(20*(*i).GetX()), float(-20*(*i).GetY()));
+
+    magazine = scene->addPolygon(polygon, outlinePen, blueBrush);
+
+    std::vector<Ware> wares = population[0].GetWares();
+    //rysowanie towarów
+    for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
+    { if((*i).x >= 0)
+        {
+            scene->addRect(QRect(20*(*i).x, -20*(*i).y, 20*(*i).getActualWidth(), -20*(*i).getActualHeight()), outlinePen, greenBrush);
+            //std::cout<<"{id:"<< (*i).id<<" x:"<<(*i).x<<" y:"<<(*i).y<<" width:"<<(*i).getActualWidth()<<" height:"<<(*i).getActualHeight()<<"}"<<std::endl;
+
+        }
+    }
+
+
+    //wypisywanie wyniku
+    double warehouseCoverage = population[0].getWaresArea()  / warehouseArea * 100.0;
+    string s = to_string(warehouseCoverage);
+    ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni"));
 
 }
 

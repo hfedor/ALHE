@@ -27,6 +27,8 @@ private:
 public:
     std::vector<Point> GetVerticles() { return vertices; }
     std::vector<Ware> GetWares() { return wares; }
+    double getWaresArea(){return waresArea;}
+    void setWares(std::vector<Ware> wares){this->wares = wares;}
     static bool  compare(Individual i1, Individual i2);
     void initTestSet();
     void initTestSet2();
@@ -35,6 +37,7 @@ public:
     void mutateBySwap();
     void mutateByRotation();
     double calculateWaresArea();
+
     Individual crossover(Individual secondParent);
     void shuffle();
     void fillRectangleWarehouse(int warehouseWidth, int warehouseHeight, int hallwayWidth);
