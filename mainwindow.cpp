@@ -15,6 +15,15 @@
 
 using namespace std;
 
+QColor RandWareColor()
+{
+    int R,G,B;
+    R = 97 + (rand() % 34);
+    G = 61 + (rand() % 37);
+    B = 19 + (rand() % 41);
+    return QColor(R,G,B,255);
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -24,14 +33,13 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    QBrush greenBrush(QColor(97, 61, 19, 255));
     QBrush blueBrush(QColor(84, 84, 84, 255));
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
-    int populationSize = 1;//40;
+    int populationSize = 40;
     int lambda = 70;
-    int generationCount = 1;//000;
+    int generationCount = 1000;
     int mutateBySwapRate = 10;
     int mutateByRotationRate = 10;
 
@@ -58,8 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
         if((*i).x >= 0)
-            scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, greenBrush);
-
+        {
+            QBrush wareBrush(RandWareColor());
+            scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, wareBrush);
+        }
 }
 
 MainWindow::~MainWindow()
@@ -79,7 +89,7 @@ void MainWindow::on_pushButton_clicked()
 
     QPolygonF polygon;
 
-    QBrush greenBrush(Qt::green);
+    QBrush wareBrush(Qt::green);
     QBrush blueBrush(Qt::blue);
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
@@ -116,7 +126,7 @@ void MainWindow::on_pushButton_clicked()
         if((*i).x >= 0)
         {
             QGraphicsRectItem *ware;
-            ware = scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, greenBrush);
+            ware = scene->addRect(QRect(20*(*i).x, 20*(*i).y, 20*(*i).getActualWidth(), 20*(*i).getActualHeight()), outlinePen, wareBrush);
             ware->setFlag(QGraphicsItem::ItemIsMovable);
         }
 }
