@@ -19,14 +19,12 @@ bool Warehouse::compare(Warehouse* warehouse)
 
 double Warehouse::calculateWaresArea()
 {
-    int i = 0;
     double sum = 0;
-    while(wares[i].fitted)
-    {
-        sum += wares[i].getArea();
-        i++;
-    }
-    this->waresArea= sum;
+    for(vector<Ware>::iterator w = wares.begin(); w != wares.end(); w++)
+        if((*w).fitted)
+            sum += (*w).getArea();
+
+    waresArea= sum;
     return waresArea;
 }
 
@@ -94,7 +92,7 @@ void Warehouse::initRandom(int n)
 
 void Warehouse::mutateBySwap()
 {
-    int firstIndex = rand()%wares.size(),secondIndex = rand()%wares.size();
+    int firstIndex = rand()%wares.size(), secondIndex = rand()%wares.size();
     std::swap(wares[firstIndex],wares[secondIndex]);
 }
 
@@ -103,4 +101,25 @@ void Warehouse::mutateByRotation()
     int index = rand()%wares.size();
     wares[index].rotate = !wares[index].rotate;
 
+}
+
+double Warehouse::GetWaresArea()
+{
+    waresArea = 0;
+
+    for(auto w : wares)
+        if(w.fitted)
+            waresArea += w.height * w.width;
+
+    return waresArea;
+}
+
+void Warehouse::randomize()
+{
+    for(vector<Ware>::iterator w = wares.begin(); w != wares.end(); w++)
+    {
+        std::swap(*w,wares[rand()%wares.size()]);
+        if(rand()%2 == 0)
+            w->rotate = !w->rotate;
+    }
 }

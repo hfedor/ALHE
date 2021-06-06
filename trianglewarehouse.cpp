@@ -162,14 +162,17 @@ void TriangleWarehouse::fillWithWares()
             // jeśli rzaden przedmiot już się nie zmieści
             if( row_width + min_ware_width >
                     (rowCount%2==0 ? max_row_width_for_current_ware : (((currentY + min_ware_height - rightLegB)/rightLegA) - row_begin)) ||
-                currentY + min_ware_height > warehouseHeight)
+                currentY + min_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
                 break;
 
 
             // jeśli produkt się nie mieści pomijamy go
             if(row_width + current_ware_width > max_row_width_for_current_ware ||
-                    currentY + current_ware_height > warehouseHeight)
+                    currentY + current_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
             {
+                if(j == available_wares.end())
+                    break;
+
                 j++;
                 continue;
             }
@@ -201,9 +204,8 @@ void TriangleWarehouse::fillWithWares()
                    isPointInside(wDx,wDy,leftLegA,0,rightLegA,rightLegB)) //prawy górny
             {
                 if(maxWareHeightInRow < current_ware_height)
-                {
                     maxWareHeightInRow = current_ware_height;
-                }
+
                 wares[*j].x = wAx;
                 wares[*j].y = wAy;
                 wares[*j].fitted = true;
@@ -223,7 +225,12 @@ void TriangleWarehouse::fillWithWares()
                 j = available_wares.begin();
             }
             else
+            {
+                if(j == available_wares.end())
+                    break;
+
                 j++;
+            }
         }
 
         currentY += maxWareHeightInRow;
@@ -231,6 +238,7 @@ void TriangleWarehouse::fillWithWares()
             currentY +=  hallwayWidth;
     }
 
+    /*
     if(first_ware_in_row != -1 && rowCount%2==0)
     {
         currentY = wares[first_ware_in_row].y;
@@ -266,10 +274,29 @@ void TriangleWarehouse::fillWithWares()
                 currentX = wares[*j].x;
             }
         }
-    }
+    }*/
 }
 
 bool TriangleWarehouse::isPointInside(double x,double y, double leftLegA, double leftLegB, double rightLegA, double rightLegB)
 {
     return x>0 && leftLegA * x + leftLegB - y >=0 &&  rightLegA * x + rightLegB - y>=0;
+}
+
+double TriangleWarehouse::GetWarehouseArea()
+{
+//    double Bx = warehouseHeight /  leftLegA ;
+//    double By = warehouseHeight;
+
+//    // punkt przecięcia prawego boku i górnej podstawy
+
+//    double Dx = (warehouseHeight -rightLegB) /  rightLegA ;
+//    double Dy = warehouseHeight;
+
+
+//    // punkt przecięcia podstawy i prawego boku
+//    double Cx = - rightLegB / rightLegA;
+//    double Cy = 0;
+
+//    return (Cx + Dx-Bx) * warehouseHeight /2.0;
+    return 0;
 }

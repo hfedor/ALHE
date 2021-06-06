@@ -15,6 +15,8 @@ TrapezeWarehouse::TrapezeWarehouse(double leftLegA, double rightLegA, double rig
     double Ax = 0;
     double Ay = 0;
     vertices.push_back(Point(Ax,Ay));
+    hallwayVertices.push_back(Point(Ax,Ay));
+    hallwayVertices.push_back(Point(Ax + hallwayWidth,Ay));
 
     // punkt przecięcia podstawy i prawego boku
     double Cx = - rightLegB / rightLegA;
@@ -38,7 +40,6 @@ TrapezeWarehouse::TrapezeWarehouse(double leftLegA, double rightLegA, double rig
         double By = warehouseHeight;
         vertices.push_back(Point(Bx,By));
     }
-
 }
 
 bool TrapezeWarehouse::compare(TrapezeWarehouse tw1, TrapezeWarehouse tw2)
@@ -162,12 +163,12 @@ void TrapezeWarehouse::fillWithWares()
             // jeśli rzaden przedmiot już się nie zmieści
             if( row_width + min_ware_width >
                     (rowCount%2==0 ? max_row_width_for_current_ware : (((currentY + min_ware_height - rightLegB)/rightLegA) - row_begin)) ||
-                currentY + min_ware_height > warehouseHeight)
+                currentY + min_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
                 break;
 
             // jeśli produkt się nie mieści pomijamy go
             if(row_width + current_ware_width > max_row_width_for_current_ware ||
-                    currentY + current_ware_height > warehouseHeight)
+                    currentY + current_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
             {
                 j++;
                 continue;
@@ -200,9 +201,8 @@ void TrapezeWarehouse::fillWithWares()
                    isPointInside(wDx,wDy)) //prawy górny
             {
                 if(maxWareHeightInRow < current_ware_height)
-                {
                     maxWareHeightInRow = current_ware_height;
-                }
+
                 wares[*j].x = wAx;
                 wares[*j].y = wAy;
                 wares[*j].fitted = true;
@@ -227,8 +227,40 @@ void TrapezeWarehouse::fillWithWares()
 
         currentY += maxWareHeightInRow;
         if(rowCount%2==0)
+        {
+            if(hallwayVertices.size() > 2)
+                hallwayVertices.pop_back();
+
+            double h2Ay = currentY;
+            double h2Ax = (h2Ay)/leftLegA +hallwayWidth;
+            hallwayVertices.push_back(Point(h2Ax,h2Ay));
+
+            double h2By = h2Ay;
+            double h2Bx = (h2By - rightLegB)/rightLegA;
+            hallwayVertices.push_back(Point(h2Bx,h2By));
+
             currentY +=  hallwayWidth;
+
+            double h2Cy = currentY;
+            double h2Cx = (h2Cy - rightLegB)/rightLegA;
+            hallwayVertices.push_back(Point(h2Cx,h2Cy));
+
+            double h2Dy = h2Cy;
+            double h2Dx = (h2Dy)/leftLegA +hallwayWidth;
+            hallwayVertices.push_back(Point(h2Dx,h2Dy));
+
+            hallwayArea += ((h2Bx - h2Ax) + (h2Cx - h2Dx))*hallwayWidth/2;
+            hallwayArea += hallwayWidth * (maxWareHeightInRow + hallwayWidth);
+
+            double h2Ey = h2Dy;
+            double h2Ex = (h2Ey)/leftLegA;
+            hallwayVertices.push_back(Point(h2Ex,h2Ey));
+        }
+        else
+            hallwayArea += hallwayWidth * maxWareHeightInRow;
     }
+
+    //hallwayVertices.push_back(Point(currentY/leftLegA, currentY));
 
     if(first_ware_in_row != -1 && rowCount%2==0)
     {
@@ -271,4 +303,32 @@ void TrapezeWarehouse::fillWithWares()
 bool TrapezeWarehouse::isPointInside(double x,double y)
 {
     return x>0 && leftLegA * x - y >= 0 &&  rightLegA * x + rightLegB - y >= 0;
+}
+
+double TrapezeWarehouse::GetWarehouseArea()
+{
+    // punkt przecięcia podstawy i lewego boku
+    double Ax = 0;
+    double Ay = 0;
+
+    // punkt przecięcia podstawy i prawego boku
+    double Bx = - rightLegB / rightLegA;
+    double By = 0;
+
+    // punkt przecięcia lewego i prawego boku
+    double Ex = rightLegB / ( leftLegA - rightLegA ) ;
+    double Ey = leftLegA * Ex;
+
+    if(Ey <= warehouseHeight)
+        return (Bx - Ax) * Ey / 2;
+
+    // punkt przecięcia prawego boku i górnej podstawy
+    double Cx = (warehouseHeight - rightLegB) /  rightLegA ;
+    double Cy = warehouseHeight;
+
+    // punkt przecięcia lewego boku i górnej podstawy
+    double Dx = warehouseHeight /  leftLegA ;
+    double Dy = warehouseHeight;
+
+    return ((Bx - Ax) + (Cx - Dx))*warehouseHeight/2;
 }

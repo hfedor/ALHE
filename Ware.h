@@ -16,6 +16,18 @@ public:
     bool rotate = false;
     bool fitted = false;
 
+    Ware(int id,double width,double height)
+    {
+        this->id = id;
+        this->height = height;
+        this->width = width;
+        this->fitted=false;
+        this->rotate=false;
+        this->x=-1;
+        this->y=-1;
+    }
+    Ware()
+    {}
     double getActualWidth()
         { return rotate ? height : width; }
     double getActualHeight()

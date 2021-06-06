@@ -19,6 +19,7 @@ public:
     static bool compare(TrapezeWarehouse, TrapezeWarehouse);
     TrapezeWarehouse crossover(TrapezeWarehouse);
     void fillWithWares();
+    virtual double GetWarehouseArea();
     private:
         bool isPointInside(double x,double y);
 };

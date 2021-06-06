@@ -15,9 +15,10 @@ class RectangleWarehouse : public Warehouse
     double warehouseHeight; // wysokość magazynu
 public:
     RectangleWarehouse(double warehouseWidth, double warehouseHeight, double hallwayWidth);
-    bool compare(RectangleWarehouse);
+    static bool compare(RectangleWarehouse, RectangleWarehouse);
     RectangleWarehouse crossover(RectangleWarehouse);
     void fillWithWares();
+    virtual double GetWarehouseArea();
 private:
 };
 
