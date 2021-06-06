@@ -20,8 +20,9 @@ public:
     TriangleWarehouse crossover(TriangleWarehouse);
     void fillWithWares();
     virtual double GetWarehouseArea();
+    virtual double GetHallwayArea();
 private:
-    bool isPointInside(double x,double y, double leftLegA, double leftLegB, double rightLegA, double rightLegB);
+    bool isPointInside(double x,double y);
 };
 
 #endif // TRIANGLEWAREHOUSE_H

@@ -54,7 +54,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="rectangleWarehouseTab">
           <attribute name="title">
@@ -91,6 +91,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="text">
+               <string>20</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -113,6 +116,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="text">
+               <string>20</string>
               </property>
              </widget>
             </item>
@@ -399,6 +405,9 @@
            <property name="text">
             <string/>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="6" column="0">
@@ -411,7 +420,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="generationCountForm">
            <property name="text">
-            <string>1000</string>
+            <string>10</string>
            </property>
           </widget>
          </item>

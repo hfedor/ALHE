@@ -19,7 +19,9 @@ public:
     RectangleWarehouse crossover(RectangleWarehouse);
     void fillWithWares();
     virtual double GetWarehouseArea();
+    virtual double GetHallwayArea();
 private:
+    bool isPointInside(double x,double y);
 };
 
 #endif // RECTANGLEWAREHOUSE_H

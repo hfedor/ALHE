@@ -4,19 +4,17 @@
 
 using namespace std;
 
-TrapezeWarehouse::TrapezeWarehouse(double leftLegA, double rightLegA, double rightLegB, double hallwayWidth, double warehouseHeight) :
+TrapezeWarehouse::TrapezeWarehouse(double leftLegA, double rightLegA, double rightLegB, double hallwayWidth, double new_warehouseHeight) :
     Warehouse(hallwayWidth),
     leftLegA(leftLegA),
     rightLegA(rightLegA),
     rightLegB(rightLegB),
-    warehouseHeight(warehouseHeight)
+    warehouseHeight(new_warehouseHeight)
 {
     // punkt przecięcia podstawy i lewego boku
     double Ax = 0;
     double Ay = 0;
     vertices.push_back(Point(Ax,Ay));
-    hallwayVertices.push_back(Point(Ax,Ay));
-    hallwayVertices.push_back(Point(Ax + hallwayWidth,Ay));
 
     // punkt przecięcia podstawy i prawego boku
     double Cx = - rightLegB / rightLegA;
@@ -27,7 +25,10 @@ TrapezeWarehouse::TrapezeWarehouse(double leftLegA, double rightLegA, double rig
     double Ex = rightLegB / ( leftLegA - rightLegA ) ;
     double Ey = leftLegA * Ex;
     if(Ey <= warehouseHeight)
+    {
        vertices.push_back(Point(Ex,Ey));
+       warehouseHeight = Ey;
+    }
     else
     {
         // punkt przecięcia prawego boku i górnej podstawy
@@ -128,6 +129,10 @@ void TrapezeWarehouse::fillWithWares()
 
     int first_ware_in_row = -1; // indeks pierwszego towaru z aktualnego rzędu
 
+    hallwayVertices.clear();
+    hallwayVertices.push_back(Point(0,0));
+    hallwayVertices.push_back(Point(hallwayWidth,0));
+
     while(is_some_available && !available_wares.empty()) // póki są dostępne jeszcze jakiś nieułożone towary
     {
         rowCount++;
@@ -139,6 +144,7 @@ void TrapezeWarehouse::fillWithWares()
         double row_width = 0; // aktualna szerokość rzędu
 
         double row_begin = (currentY + min_ware_height)/leftLegA + hallwayWidth; // początek aktualnego rzędu
+        double currentX = row_begin;
 
         list<int>::iterator j = available_wares.begin();
         while(j != available_wares.end())
@@ -146,11 +152,11 @@ void TrapezeWarehouse::fillWithWares()
             double current_ware_height = wares[*j].getActualHeight();
             double current_ware_width = wares[*j].getActualWidth();
 
-            if(!is_first_ware_in_row_set)
-            {
+            if(currentX < (currentY + current_ware_height)/leftLegA + hallwayWidth)
                 currentX = (currentY + current_ware_height)/leftLegA + hallwayWidth; // początek rzędu, jeśli uda się postawić aktualny towar
+
+            if(!is_first_ware_in_row_set)
                 row_begin = currentX;
-            }
 
             double max_row_width_for_current_ware; // maksymalna szerokość rzędu dla aktualnie sprawdzanego towaru
             double max_row_height_for_current_ware; // wyszkość rzędu do sprawdzenia dla aktualnego towaru
@@ -225,14 +231,16 @@ void TrapezeWarehouse::fillWithWares()
                 j++;
         }
 
-        currentY += maxWareHeightInRow;
+        if(is_first_ware_in_row_set)
+            currentY += maxWareHeightInRow;
+
         if(rowCount%2==0)
         {
             if(hallwayVertices.size() > 2)
                 hallwayVertices.pop_back();
 
             double h2Ay = currentY;
-            double h2Ax = (h2Ay)/leftLegA +hallwayWidth;
+            double h2Ax = min((h2Ay)/leftLegA +hallwayWidth, (h2Ay - rightLegB)/rightLegA);
             hallwayVertices.push_back(Point(h2Ax,h2Ay));
 
             double h2By = h2Ay;
@@ -241,26 +249,30 @@ void TrapezeWarehouse::fillWithWares()
 
             currentY +=  hallwayWidth;
 
-            double h2Cy = currentY;
-            double h2Cx = (h2Cy - rightLegB)/rightLegA;
-            hallwayVertices.push_back(Point(h2Cx,h2Cy));
+            if(currentY < warehouseHeight)
+            {
+                double h2Cy = currentY;
+                double h2Cx = (h2Cy - rightLegB)/rightLegA;
+                hallwayVertices.push_back(Point(h2Cx,h2Cy));
 
-            double h2Dy = h2Cy;
-            double h2Dx = (h2Dy)/leftLegA +hallwayWidth;
-            hallwayVertices.push_back(Point(h2Dx,h2Dy));
+                double h2Dy = h2Cy;
+                double h2Dx = (h2Dy)/leftLegA +hallwayWidth;
+                hallwayVertices.push_back(Point(h2Dx,h2Dy));
 
-            hallwayArea += ((h2Bx - h2Ax) + (h2Cx - h2Dx))*hallwayWidth/2;
-            hallwayArea += hallwayWidth * (maxWareHeightInRow + hallwayWidth);
-
-            double h2Ey = h2Dy;
-            double h2Ex = (h2Ey)/leftLegA;
-            hallwayVertices.push_back(Point(h2Ex,h2Ey));
+                double h2Ey = h2Dy;
+                double h2Ex = (h2Ey)/leftLegA;
+                hallwayVertices.push_back(Point(h2Ex,h2Ey));
+            }
+            else
+            {
+                double h2Ey = warehouseHeight;
+                double h2Ex = (h2Ey - rightLegB)/rightLegA;
+                hallwayVertices.push_back(Point(h2Ex,h2Ey));
+            }
         }
-        else
-            hallwayArea += hallwayWidth * maxWareHeightInRow;
     }
 
-    //hallwayVertices.push_back(Point(currentY/leftLegA, currentY));
+    hallwayVertices.push_back(Point(currentY/leftLegA, currentY));
 
     if(first_ware_in_row != -1 && rowCount%2==0)
     {
@@ -270,6 +282,7 @@ void TrapezeWarehouse::fillWithWares()
         //sprawdzanie maksymalnej dłuości i punktu startowego na aktualnym y
         maxRowWidth = (currentY - rightLegB)/rightLegA - wares[first_ware_in_row].x;
         maxWareHeightInRow = 0;
+        bool last_row_added = false;
 
         for(list<int>::iterator j = available_wares.begin(); j != available_wares.end(); j++)
         {
@@ -295,14 +308,117 @@ void TrapezeWarehouse::fillWithWares()
                 wares[*j].y = currentY;
                 wares[*j].fitted = true;
                 currentX = wares[*j].x;
+
+                last_row_added = true;
             }
         }
+
+        if(last_row_added)
+        {
+            list<Point>::iterator i = hallwayVertices.begin();
+            while(i != hallwayVertices.end())
+                if(i->GetY() > currentY)
+                    i = hallwayVertices.erase(i);
+                else
+                    i++;
+
+            double h2Ey = currentY;
+            double h2Ex = (h2Ey)/leftLegA;
+            hallwayVertices.push_back(Point(h2Ex,h2Ey));
+        }
     }
+
+    list<Point>::iterator i = hallwayVertices.begin();
+    while(i != hallwayVertices.end())
+        if(!isPointInside(i->GetX(),i->GetY()))
+            i = hallwayVertices.erase(i);
+        else
+            i++;
 }
 
 bool TrapezeWarehouse::isPointInside(double x,double y)
 {
-    return x>0 && leftLegA * x - y >= 0 &&  rightLegA * x + rightLegB - y >= 0;
+    return x>=0 && leftLegA * x - y >= 0 &&  rightLegA * x + rightLegB - y >= 0;
+}
+
+double TrapezeWarehouse::GetHallwayArea()
+{
+    if(hallwayVertices.empty())
+        return 0;
+
+    hallwayArea = 0;
+
+    hallwayVertices.unique();
+
+    Point last = hallwayVertices.back();
+    if(last.GetY()/leftLegA != last.GetX())
+        hallwayVertices.push_back(Point(warehouseHeight/leftLegA, warehouseHeight));
+
+    list<Point>::iterator j = hallwayVertices.begin();
+    for(;j != hallwayVertices.end();j++)
+        cout << "(" << j->GetX() << ":" << j->GetY() << ")" << endl;
+
+    list<Point>::iterator i = hallwayVertices.begin();
+    if(i != hallwayVertices.end())
+        i++;
+    else
+        return -1;
+
+    if(i == hallwayVertices.end())
+        return -1;
+
+    i++;
+    if(i == hallwayVertices.end())
+        return -1;
+
+    while( i != hallwayVertices.end() )
+    {
+        Point A = *i;
+
+        i++;
+        if(i == hallwayVertices.end())
+        {
+            hallwayArea += hallwayWidth * A.GetY();
+            break;
+        }
+
+        Point B = *i;
+
+        if(A.GetY() != B.GetY())
+            return -1;
+
+        i++;
+        if(i == hallwayVertices.end())
+            return -1;
+
+        Point C = *i;
+
+        i++;
+        if(i == hallwayVertices.end())
+        {
+            A.SetX(A.GetY()/leftLegA);
+
+            hallwayArea += hallwayWidth * A.GetY();
+            hallwayArea += (B.GetX() - A.GetX())*(C.GetY() - A.GetY())/2;
+            break;
+        }
+
+        Point D = *i;
+
+        if(D == hallwayVertices.back())
+        {
+            A.SetX(A.GetY()/leftLegA);
+
+            hallwayArea += hallwayWidth * A.GetY();
+        }
+
+        if(D.GetY() == C.GetY())
+            hallwayArea += (B.GetX() - A.GetX() + C.GetX() - D.GetX())*(D.GetY() - A.GetY())/2;
+
+        i++;
+    }
+
+    return hallwayArea;
 }
 
 double TrapezeWarehouse::GetWarehouseArea()

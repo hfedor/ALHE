@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <vector>
+#include <list>
 
 #include "Ware.h"
 #include "point.h"
@@ -17,7 +18,7 @@ protected:
     std::vector<Point> vertices; // tablica wierzchołków
     double waresArea = 0; // powierzchnia zajmowana przez towary
     double hallwayArea = 0;
-    std::vector<Point> hallwayVertices;
+    std::list<Point> hallwayVertices;
     double hallwayWidth; // szerokość korytarz
 public:
     Warehouse(double hallwayWidth);
@@ -30,7 +31,8 @@ public:
     void initTestSet1x1(int n);
     void initRandom(int n);
     std::vector<Point> GetVerticles() { return vertices; }
-    std::vector<Point> GetHallwayVerticles() { return hallwayVertices; }
+    virtual double GetHallwayArea() = 0;
+    std::list<Point> GetHallwayVerticles() { return hallwayVertices; }
     std::vector<Ware> GetWares() { return wares; }
     double GetWaresArea();
     virtual double GetWarehouseArea() = 0;

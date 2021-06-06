@@ -221,6 +221,12 @@ void MainWindow::on_generateButton_clicked()
         magazine = scene->addPolygon(polygon, outlinePen, blueBrush);
 
         std::vector<Ware> wares = population.GetBest().GetWares();
+        QPolygonF hallway;
+
+        for(auto i : population.GetBest().GetHallwayVerticles())
+            hallway << QPointF(float(20*(i.GetX())), float(20*(i.GetY())));
+
+        scene->addPolygon(hallway, outlinePen, QBrush(QColor(54, 54, 54, 255)));
 
         for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
             if((*i).x >= 0)
@@ -234,10 +240,11 @@ void MainWindow::on_generateButton_clicked()
 
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
+        double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
         std::string s = to_string(warehouseCoverage);
-        std::string s1 = to_string(population.GetBest().GetWaresArea());
-        std::string s2 = to_string(population.GetBest().GetWarehouseArea());
-        ui->resultLabel->setText(QString::fromStdString(s1+s2+"Wynik:  "+ s + "% zajętej powierzchni"));
+        std::string s2 = to_string(hallwayCoverage);
+        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
+
     }
     else if(selectedWarehouseShape == 1)
     {
@@ -277,6 +284,13 @@ void MainWindow::on_generateButton_clicked()
 
         std::vector<Ware> wares = population.GetBest().GetWares();
 
+        QPolygonF hallway;
+
+        for(auto i : population.GetBest().GetHallwayVerticles())
+            hallway << QPointF(float(20*(i.GetX())), float(20*(i.GetY())));
+
+        scene->addPolygon(hallway, outlinePen, QBrush(QColor(54, 54, 54, 255)));
+
         for(std::vector<Ware>::iterator i = wares.begin(); i != wares.end(); i++)
             if((*i).x >= 0)
             {
@@ -289,10 +303,11 @@ void MainWindow::on_generateButton_clicked()
 
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
+        double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
         std::string s = to_string(warehouseCoverage);
-        std::string s1 = to_string(population.GetBest().GetWaresArea());
-        std::string s2 = to_string(population.GetBest().GetWarehouseArea());
-        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni"));
+        std::string s2 = to_string(hallwayCoverage);
+        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
+
     }
     else if(selectedWarehouseShape == 2)
     {
@@ -350,19 +365,10 @@ void MainWindow::on_generateButton_clicked()
 
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
+        double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
         std::string s = to_string(warehouseCoverage);
-        std::string s1 = to_string(population.GetBest().GetWaresArea());
-        std::string s2 = to_string(population.GetBest().GetWarehouseArea());
-        //ui->resultLabel->setText(QString::fromStdString(s1+s2+"Wynik:  "+ s + "% zajętej powierzchni"));
-        std::string s3 = "";
-        int k = 0;
-        for(auto v : population.GetBest().GetHallwayVerticles())
-        {
-            s3 += "(" + to_string(v.GetX()) + ":" + to_string(v.GetY()) + ")";
-            s3 += k%2==0 ? "\n" : "";
-            k++;
-        }
-        ui->resultLabel->setText(QString::fromStdString(s3));
+        std::string s2 = to_string(hallwayCoverage);
+        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
     }
 }
 

@@ -20,8 +20,9 @@ public:
     TrapezeWarehouse crossover(TrapezeWarehouse);
     void fillWithWares();
     virtual double GetWarehouseArea();
-    private:
-        bool isPointInside(double x,double y);
+    virtual double GetHallwayArea();
+private:
+    bool isPointInside(double x,double y);
 };
 
 #endif // TRAPEZEWAREHOUSE_H
