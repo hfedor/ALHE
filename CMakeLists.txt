@@ -32,12 +32,18 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        individual.h
-        individual.cpp
+        population.h
+        warehouse.h
+        warehouse.cpp
+        rectanglewarehouse.h
+        rectanglewarehouse.cpp
+        trapezewarehouse.h
+        trapezewarehouse.cpp
+        trianglewarehouse.h
+        trianglewarehouse.cpp
         Ware.h
         Ware.cpp
         Point.h
-        Point.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
