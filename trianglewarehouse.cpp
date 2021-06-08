@@ -26,6 +26,8 @@ TriangleWarehouse::TriangleWarehouse(double leftLegA, double rightLegA, double r
     double Cx = - rightLegB / rightLegA;
     double Cy = 0;
     vertices.push_back(Point(Cx,Cy));
+
+    hallwayX = hallwayWidth*sqrt(1 + 1/(leftLegA * leftLegA));
 }
 
 bool TriangleWarehouse::compare(TriangleWarehouse tw1, TriangleWarehouse tw2)
@@ -96,7 +98,7 @@ void TriangleWarehouse::fillWithWares()
         item.fitted=false;
     }
 
-    double currentX = hallwayWidth;    // aktualna pozycja x'owa układania towarów w magazynie - początkowo długość korytarza
+    double currentX = hallwayX;    // aktualna pozycja x'owa układania towarów w magazynie - początkowo długość korytarza
     double currentY= 0;     // aktualna pozycja y'owa układania towarów w magazynie - początkowo 0
 
     int rowCount = -1;   // liczba ułożonych rzędów
@@ -107,7 +109,7 @@ void TriangleWarehouse::fillWithWares()
 
     list<int> available_wares;    // towary jeszcze nie ułożone
 
-    double maxRowWidth = (currentY - rightLegB)/rightLegA - (currentY)/leftLegA - hallwayWidth; // maksymalna długość aktulalnego rzędu towarów
+    double maxRowWidth = (currentY - rightLegB)/rightLegA - (currentY)/leftLegA - hallwayX; // maksymalna długość aktulalnego rzędu towarów
     double min_ware_width = maxRowWidth; // szerokość najwęższego z towarów
     double min_ware_height = warehouseHeight;   // wyskość najniższego z towarów
 
@@ -129,7 +131,7 @@ void TriangleWarehouse::fillWithWares()
 
     hallwayVertices.clear();
     hallwayVertices.push_back(Point(0,0));
-    hallwayVertices.push_back(Point(hallwayWidth,0));
+    hallwayVertices.push_back(Point(hallwayX,0));
 
     while(is_some_available && !available_wares.empty()) // póki są dostępne jeszcze jakiś nieułożone towary
     {
@@ -141,7 +143,7 @@ void TriangleWarehouse::fillWithWares()
 
         double row_width = 0; // aktualna szerokość rzędu
 
-        double row_begin = (currentY + min_ware_height)/leftLegA + hallwayWidth; // początek aktualnego rzędu
+        double row_begin = (currentY + min_ware_height)/leftLegA + hallwayX; // początek aktualnego rzędu
         double currentX = row_begin;
 
         list<int>::iterator j = available_wares.begin();
@@ -150,8 +152,8 @@ void TriangleWarehouse::fillWithWares()
             double current_ware_height = wares[*j].getActualHeight();
             double current_ware_width = wares[*j].getActualWidth();
 
-            if(currentX < (currentY + current_ware_height)/leftLegA + hallwayWidth)
-                currentX = (currentY + current_ware_height)/leftLegA + hallwayWidth; // początek rzędu, jeśli uda się postawić aktualny towar
+            if(currentX < (currentY + current_ware_height)/leftLegA + hallwayX)
+                currentX = (currentY + current_ware_height)/leftLegA + hallwayX; // początek rzędu, jeśli uda się postawić aktualny towar
 
             if(!is_first_ware_in_row_set)
                 row_begin = currentX;
@@ -238,7 +240,7 @@ void TriangleWarehouse::fillWithWares()
                 hallwayVertices.pop_back();
 
             double h2Ay = currentY;
-            double h2Ax = min((h2Ay)/leftLegA +hallwayWidth, (h2Ay - rightLegB)/rightLegA);
+            double h2Ax = min((h2Ay)/leftLegA + hallwayX, (h2Ay - rightLegB)/rightLegA);
             hallwayVertices.push_back(Point(h2Ax,h2Ay));
 
             double h2By = h2Ay;
@@ -254,7 +256,7 @@ void TriangleWarehouse::fillWithWares()
                 hallwayVertices.push_back(Point(h2Cx,h2Cy));
 
                 double h2Dy = h2Cy;
-                double h2Dx = (h2Dy)/leftLegA +hallwayWidth;
+                double h2Dx = (h2Dy)/leftLegA + hallwayX;
                 hallwayVertices.push_back(Point(h2Dx,h2Dy));
 
                 double h2Ey = h2Dy;
@@ -376,7 +378,7 @@ double TriangleWarehouse::GetHallwayArea()
         i++;
         if(i == hallwayVertices.end())
         {
-            hallwayArea += hallwayWidth * A.GetY();
+            hallwayArea += hallwayX * A.GetY();
             break;
         }
 
@@ -396,7 +398,7 @@ double TriangleWarehouse::GetHallwayArea()
         {
             A.SetX(A.GetY()/leftLegA);
 
-            hallwayArea += hallwayWidth * A.GetY();
+            hallwayArea += hallwayX * A.GetY();
             hallwayArea += (B.GetX() - A.GetX())*(C.GetY() - A.GetY())/2;
             break;
         }
@@ -407,7 +409,7 @@ double TriangleWarehouse::GetHallwayArea()
         {
             A.SetX(A.GetY()/leftLegA);
 
-            hallwayArea += hallwayWidth * A.GetY();
+            hallwayArea += hallwayX * A.GetY();
         }
 
         if(D.GetY() == C.GetY())

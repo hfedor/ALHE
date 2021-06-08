@@ -5,16 +5,18 @@
 #ifndef UNTITLED3_WARE_H
 #define UNTITLED3_WARE_H
 
-
+/*
+ *  Klasa obiektów przedstawiających towary
+*/
 class Ware {
 public:
-    int id;
-    double width;
-    double height;
-    double x;
-    double y;
-    bool rotate = false;
-    bool fitted = false;
+    int id;                 // indeks towaru
+    double width;           // szerokość towaru
+    double height;          // wysokość  towaru
+    double x;               // pierwsza współrzędna położenia towaru w magazynie - (lewy górny wierzchołek towaru)
+    double y;               // druga    współrzędna położenia towaru w magazynie - (lewy górny wierzchołek towaru)
+    bool rotate = false;    // czy towar został obrócony o 90 stopi
+    bool fitted = false;    // czy towar został umieszczony w magazynie
 
     Ware(int id,double width,double height)
     {

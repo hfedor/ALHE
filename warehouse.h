@@ -14,12 +14,12 @@
 class Warehouse
 {
 protected:
-    std::vector <Ware> wares; // tablica towarów
-    std::vector<Point> vertices; // tablica wierzchołków
-    double waresArea = 0; // powierzchnia zajmowana przez towary
-    double hallwayArea = 0;
-    std::list<Point> hallwayVertices;
-    double hallwayWidth; // szerokość korytarz
+    std::vector <Ware> wares;           // tablica towarów
+    std::vector<Point> vertices;        // tablica wierzchołków
+    double waresArea = 0;               // powierzchnia zajmowana przez towary
+    double hallwayArea = 0;             // powierzchnia zajmowana przez korytarz
+    std::list<Point> hallwayVertices;   // list wiezrchołków korytarza
+    double hallwayWidth;                // szerokość korytarza
 public:
     Warehouse(double hallwayWidth);
     void adaptationFunction();
@@ -30,9 +30,9 @@ public:
     void initTestSet2();
     void initTestSet1x1(int n);
     void initRandom(int n);
-    std::vector<Point> GetVerticles() { return vertices; }
     virtual double GetHallwayArea() = 0;
     std::list<Point> GetHallwayVerticles() { return hallwayVertices; }
+    std::vector<Point> GetVerticles() { return vertices; }
     std::vector<Ware> GetWares() { return wares; }
     double GetWaresArea();
     virtual double GetWarehouseArea() = 0;

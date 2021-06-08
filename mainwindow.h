@@ -29,15 +29,9 @@ private slots:
 
     void on_add_wares_clicked(){};
 
-
-
     void on_pushButton_3_clicked();
 
     void on_generateButton_clicked();
-
-
-
-
 
 private:
     Ui::MainWindow *ui;

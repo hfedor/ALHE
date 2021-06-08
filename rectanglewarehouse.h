@@ -3,12 +3,9 @@
 
 #include "warehouse.h"
 
-#include <iostream>
-#include <time.h>
-#include <cstdlib>
-#include <algorithm>
-#include <vector>
-
+/*
+ *  klasa obiektów repezentujących magazyny w kształtach prostokątów
+*/
 class RectangleWarehouse : public Warehouse
 {
     double warehouseWidth; // szerokość magazynu
@@ -17,11 +14,11 @@ public:
     RectangleWarehouse(double warehouseWidth, double warehouseHeight, double hallwayWidth);
     static bool compare(RectangleWarehouse, RectangleWarehouse);
     RectangleWarehouse crossover(RectangleWarehouse);
-    void fillWithWares();
     virtual double GetWarehouseArea();
     virtual double GetHallwayArea();
 private:
     bool isPointInside(double x,double y);
+    virtual void fillWithWares();
 };
 
 #endif // RECTANGLEWAREHOUSE_H

@@ -1,44 +1,55 @@
 #include "rectanglewarehouse.h"
 
-#include <list>
-
 using namespace std;
+
+/*
+ *  Konstruktor obiektów reprezentujących magazynyu w kształtach prostokątów.
+ *  Konstruktor przyjmuje wartości:
+ *      - warehouseWidth -  szerokość magazynu,
+ *      - warehouseHeight - wysokość magazynu,
+ *      - hallwayWidth -    minimalna szerokość korytarza.
+ *  Ponadto konstruktor wyznacza wierzchołki magazynu i dodaje je do tablicy.
+*/
 
 RectangleWarehouse::RectangleWarehouse(double warehouseWidth, double warehouseHeight, double hallwayWidth) :
     Warehouse(hallwayWidth),
     warehouseWidth(warehouseWidth),
     warehouseHeight(warehouseHeight)
 {
-    // lewy, górny wierzchołek
+    // lewy, dolny wierzchołek
     double Ax = 0;
     double Ay = 0;
-    vertices.push_back(Point(Ax,Ay));
-
-    // prawy, górny wierzchołek
-    double Bx = warehouseWidth;
-    double By = 0;
-    vertices.push_back(Point(Bx,By));
+    vertices.push_back(Point(Ax,Ay)); // dodanie do tablicy na wierzchołki magazynu
 
     // prawy, dolny wierzchołek
+    double Bx = warehouseWidth;
+    double By = 0;
+    vertices.push_back(Point(Bx,By)); // dodanie do tablicy na wierzchołki magazynu
+
+    // prawy, górny wierzchołek
     double Cx = warehouseWidth;
     double Cy = warehouseHeight;
-    vertices.push_back(Point(Cx,Cy));
+    vertices.push_back(Point(Cx,Cy)); // dodanie do tablicy na wierzchołki magazynu
 
-    // lewy, dolny wierzchołek
+    // lewy, górny wierzchołek
     double Dx = 0;
     double Dy = warehouseHeight;
-    vertices.push_back(Point(Dx,Dy));
+    vertices.push_back(Point(Dx,Dy)); // dodanie do tablicy na wierzchołki magazynu
 }
 
+/*
+ *  Porównanie dwóch magazynóW pod względem powierzchni zajętej przez towary.
+ *  Zwraca wartość 'true', jeśli pierwszy zadany magazyn ma większą powierzchnię towarów.
+ */
 bool RectangleWarehouse::compare(RectangleWarehouse tw1, RectangleWarehouse tw2)
 {
     return tw1.waresArea > tw2.waresArea;
 }
 
 /*
- *krzyżowanie wyjaśnione we wstępnym
- * w skrócie z pierwszego wybieramy geny od indexu a do b
- * a z drugiego te które nie wystąpiły w pierwszym
+ *  Krzyżowanie wyjaśnione we wstępnym
+ *  w skrócie z pierwszego wybieramy geny od indexu a do b
+ *  a z drugiego te które nie wystąpiły w pierwszym
  */
 RectangleWarehouse RectangleWarehouse::crossover(RectangleWarehouse secondParent)
 {
@@ -76,201 +87,246 @@ RectangleWarehouse RectangleWarehouse::crossover(RectangleWarehouse secondParent
     return child;
 }
 
-//TODO customowe wyvieranie wejścia i układ magazynu
+/*
+ *  Algorytm wypełniania magazynu zadanymi towarami.
+ */
 void RectangleWarehouse::fillWithWares()
 {
-    // początkowo wszystkie produkty sa poza magazynem
-   for (Ware &item: wares) {
-       item.y=-1;
-       item.x=-1;
-       item.fitted=false;
-   }
+    /*
+     * Początkowo wszystkie towary sa poza magazynem.
+     * Towar, który jest poza magazynem ma współrzędne (-1,-1).
+     */
+    for (Ware &item: wares) {
+        item.y = -1;
+        item.x = -1;
+        item.fitted = false;
+    }
 
-   double currentX = hallwayWidth;    // aktualna pozycja x'owa układania towarów w magazynie - początkowo długość korytarza
-   double currentY = 0;     // aktualna pozycja y'owa układania towarów w magazynie - początkowo 0
+    /*
+     *  Punkt, w którym aktualnie próbujemy wstawić towar - jego lewy, dolny wierzchołek.
+     *  Początkowo punkt ten ustawiamy przy podstawie magazynu w odległości od ściany równej szerokość korytarza.
+     */
+    Point curr(hallwayWidth, 0);
 
-   int rowCount = -1;   // liczba ułożonych rzędów
+    int rowCount = -1;   // indeks ułożonych rzędóW - początkowo -1
 
-   double maxWareHeightInRow; // wysokość najwyższego towaru ustawionego w aktualnym rzędzie
+    /*
+     * Dla każdego układanego rzędu towarów, wyliczane będą:
+     *  - maxWareHeightInRow - wysokość najwyższego towaru w rzędzię,
+     *  - maxRowWidth - maksymalna szerokość rzędu towaróW - maksymalna suma szerokości towaróW ustawionych w rzędzie.
+     */
+    double maxWareHeightInRow; // zostanie początkowo ustawiona na wysokość najmniejszego z dostępnych towarów
+    double maxRowWidth = warehouseWidth - hallwayWidth; // początkwoo równa szerkośći podstawy magazynu, minus szrokość korytarza
 
-   list<int> available_wares;    // towary jeszcze nie ułożone
+    double min_ware_width = warehouseWidth;     // szerokość najwęższego z towarów - początkwoo zmaksymalizowana
+    double min_ware_height = warehouseHeight;   // wyskość   najniższego z towarów - początkwoo zmaksymalizowana
 
-   double maxRowWidth = warehouseWidth - hallwayWidth; // maksymalna długość aktulalnego rzędu towarów
-   double min_ware_width = maxRowWidth; // szerokość najwęższego z towarów
-   double min_ware_height = warehouseHeight;   // wyskość najniższego z towarów
+    list<int> available_wares;    // lista towarów jeszcze nie ułożonych w magazynie
 
-   bool is_some_available = true; // czy zostały jakieś wolne towary - chyba do usunięcia i zastąpienia !available_wares.empty()
-
-   // na początku wszystkie towary są dostępne
-   for(int j = 0; j < wares.size(); j++)
+   /*
+    *   Początkowo wszystkie towary są poza magazynem.
+    *   W pętli wyznaczamy również minimalne wymiary dostępnych towarów.
+    */
+   for(auto w : wares)
    {
-       wares[j].fitted = false;
-       available_wares.push_back(j);
+       available_wares.push_back(w.id);
 
-       if(min_ware_width > wares[j].getActualWidth())
-           min_ware_width = wares[j].getActualWidth();
+       if(min_ware_width > w.getActualWidth())
+           min_ware_width = w.getActualWidth();
 
-       if(min_ware_height> wares[j].getActualHeight())
-           min_ware_height = wares[j].getActualHeight();
+       if(min_ware_height> w.getActualHeight())
+           min_ware_height = w.getActualHeight();
    }
 
-   int first_ware_in_row = -1; // indeks pierwszego towaru z aktualnego rzędu
+   bool is_some_available = !wares.empty(); // czy zostały jakieś wolne towary
 
+   int first_ware_in_row = -1; // indeks pierwszego towaru z aktualnie ustawianego rzędu - początkowo -1
+
+   /*
+    *   Wyznaczanie koształtu korytarza.
+    *   Początkowo wstawiamy:
+    *       - lewy, górny wierzchołek magazynu i
+    *       - punkt leżący na podstawie magazynu w odległości równej szerokości korytarza.
+    *   Korytarz biegnie wzdłuż lewego boku magazynu.
+    */
    hallwayVertices.clear();
-   hallwayVertices.push_back(Point(0,0));
+   hallwayVertices.push_back(Point(0,0)); // lewy, dolny wierzchołke magazynu.
    hallwayVertices.push_back(Point(hallwayWidth,0));
 
+   /*
+    *   Pętla układająca kolejne rzędy towarów, do momentu, gdy nowy rząd się nie zmieści,
+    *   lub skończą się towary do układania.
+    */
    while(is_some_available && !available_wares.empty()) // póki są dostępne jeszcze jakiś nieułożone towary
    {
-       rowCount++;
+       rowCount++; // inkrementacja indeksu aktualnie układanego rzędu
+
+       /*
+        *   Na początku ustawiamy zmienną 'is_some_available' na 'false'.
+        *   Jeśli w obiekguu pętli zostanie zmieniona na true, to udało się dodać jakiś towar do rzędu.
+        *   Jeśli na koniec obiegu wciąż będzie równa 'false', to oznacza, że nie da się wstawić więcej towaróW.
+        */
        is_some_available = false;
-       bool is_first_ware_in_row_set = false;
 
-       maxWareHeightInRow = min_ware_height; // wyskość naajwyższego towaru w rzędzie
+       maxWareHeightInRow = min_ware_height; // wyskość naajwyższego towaru w rzędzie - początkowo najmniejsza z możliwych
 
-       double row_width = 0; // aktualna szerokość rzędu
+       double row_width = 0; // aktualna szerokość rzędu - suma szrokości towarów ułożonych w rzędzie
 
-       currentX = hallwayWidth;
+       /*
+        *   Na początku każdego obiegu pętli zaczynamy ustawianie towarów w odległości od ściany równej
+        *   szerokości korytarza.
+        */
+       curr.SetX(hallwayWidth);
 
-       list<int>::iterator j = available_wares.begin();
-       while(j != available_wares.end())
-       {
-           double current_ware_height = wares[*j].getActualHeight();
-           double current_ware_width = wares[*j].getActualWidth();
+       /*
+        *   Pętla po wszystkich nieułożonych obiektach,
+        *   wykonująca algorytm ukłądania towarów w rzędzie.
+        */
+        list<int>::iterator j = available_wares.begin();
+        while(j != available_wares.end())
+        {
+            /*
+            * Sprawdzamy, czy zmieści się jeszcze towar o najmniejszych dostępnych rozmiarach.
+            * Jeśli nie - kończymy układanie rzędu.
+            */
+            if( row_width + min_ware_width > maxRowWidth ||
+                curr.GetY() + min_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
+                    break;
 
-           // jeśli rzaden przedmiot już się nie zmieści
-           if( row_width + min_ware_width > maxRowWidth ||
-               currentY + min_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
-               break;
+            /*
+            *   Wczytanie wymarów aktualnie sprawdzanego towaru.
+            */
+            double current_ware_height = wares[*j].getActualHeight();
+            double current_ware_width = wares[*j].getActualWidth();
 
-           // jeśli produkt się nie mieści pomijamy go
-           if(row_width + current_ware_width > maxRowWidth ||
-                   currentY + current_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
-           {
-               j++;
-               continue;
-           }
+            // jeśli produkt się nie mieści pomijamy go
+            if(row_width + current_ware_width > maxRowWidth ||
+                curr.GetY() + current_ware_height + (rowCount%2==0 ? hallwayWidth : 0) > warehouseHeight)
+            {
+                j++;
+                continue;
+            }
 
-           if(maxWareHeightInRow < current_ware_height)
+            // aktualizacja największej wysokości towau w rzędzie
+            if(maxWareHeightInRow < current_ware_height)
                maxWareHeightInRow = current_ware_height;
 
-           double wAx, wAy;
-           wAx = currentX;
-           wAy = rowCount%2==0 ?
-                       currentY + maxWareHeightInRow - current_ware_height :
-                       currentY;
+            /*
+            *   Wstawianie towaru do magazynu.
+            *   Rzędy o parzystych indeksach mają nad sobą korytarz.
+            *   Towary są podsuwane do korytarza, czyli
+            *   w rzędach parzystych   do góry, a
+            *   w rzędach nieprzystych do dołu.
+            */
+            wares[*j].x = curr.GetX();
+            wares[*j].y = rowCount%2==0 ?
+                curr.GetY() + maxWareHeightInRow - current_ware_height :
+                curr.GetY();
+            wares[*j].fitted = true;
 
-           wares[*j].x = wAx;
-           wares[*j].y = wAy;
-           wares[*j].fitted = true;
+            // aktualizacja szerokość rzędu
+            row_width += current_ware_width;
 
-           row_width += current_ware_width;
-           currentX += current_ware_width;
+            // aktualizacja aktualnego punktu w usawiania towarów
+            curr.AddToX(current_ware_width);
 
-           is_some_available = true;
+            // jeśli nie ułożono wcześniej rzadnego towaru w tym rzędzie
+            if(!is_some_available)
+            {
+                is_some_available = true;
+                first_ware_in_row = *j; // aktualizacja indeksu pierwszego toawru w rzędzie
+            }
 
-           if(!is_first_ware_in_row_set)
-           {
-               is_first_ware_in_row_set = true;
-               first_ware_in_row = *j;
-           }
+            // usuwanie towaru z listy nieustawionych
+            j = available_wares.erase(j);
+            if(j == available_wares.end())
+                break;
+        }
 
-           available_wares.erase(j);
-           j = available_wares.begin();
-       }
+        /*
+         *   Jeśli udało sie sprawdzić ułożyć jakiś towar w rzędzie,
+         *   to przesuwamy w górę punkt, w którym będziemy ustawiać towary o wysokość ułożonego rzędu.
+         */
+        if(is_some_available)
+           curr.AddToY(maxWareHeightInRow);
 
-       if(is_first_ware_in_row_set)
-           currentY += maxWareHeightInRow;
+        /*
+         *  Jeśli indeks rzędu jest parzysty i udało się ustawić jakiś towar w rzędzie,
+         *  to po ułożeniu rzędu ustawiamy nad nim korytzarz boczny.
+         */
+        if(rowCount%2==0 && is_some_available)
+        {
+            if(curr.GetY() + hallwayWidth <= warehouseHeight)
+            {
+                hallwayVertices.push_back(Point(hallwayWidth,   curr.GetY()));
+                hallwayVertices.push_back(Point(warehouseWidth, curr.GetY()));
 
-       if(rowCount%2==0)
-    {
-      if(hallwayVertices.size() > 2)
-          hallwayVertices.pop_back();
+                curr.AddToY(hallwayWidth);
 
-      double h2Ay = currentY;
-      double h2Ax = hallwayWidth;
-      hallwayVertices.push_back(Point(h2Ax,h2Ay));
+                hallwayVertices.push_back(Point(warehouseWidth, curr.GetY()));
+                hallwayVertices.push_back(Point(hallwayWidth,   curr.GetY()));
+            }
+            else
+            {
+                if(hallwayVertices.size() == 2)
+                    hallwayVertices.push_back(Point(hallwayWidth, warehouseHeight));
 
-      double h2By = h2Ay;
-      double h2Bx = warehouseWidth;
-      hallwayVertices.push_back(Point(h2Bx,h2By));
-
-      currentY +=  hallwayWidth;
-
-      if(currentY < warehouseHeight)
-      {
-          double h2Cy = currentY;
-          double h2Cx = warehouseWidth;
-          hallwayVertices.push_back(Point(h2Cx,h2Cy));
-
-          double h2Dy = h2Cy;
-          double h2Dx = hallwayWidth;
-          hallwayVertices.push_back(Point(h2Dx,h2Dy));
-
-          double h2Ey = h2Dy;
-          double h2Ex = 0;
-          hallwayVertices.push_back(Point(h2Ex,h2Ey));
-      }
-      else
-      {
-          double h2Ey = warehouseHeight;
-          double h2Ex = warehouseWidth;
-          hallwayVertices.push_back(Point(h2Ex,h2Ey));
-      }
+                hallwayVertices.push_back(Point(0, warehouseHeight));
+            }
+        }
     }
-   }
 
-   hallwayVertices.push_back(Point(0, currentY));
+    hallwayVertices.push_back(Point(0, curr.GetY()));
 
-   if(first_ware_in_row != -1 && rowCount%2==0)
-   {
-       currentY = wares[first_ware_in_row].y;
-       currentX = wares[first_ware_in_row].x;
+    if(first_ware_in_row != -1 && rowCount%2==0)
+    {
+        curr.SetY(wares[first_ware_in_row].y);
+        curr.SetX(wares[first_ware_in_row].x);
 
-       maxWareHeightInRow = 0;
-       maxRowWidth = hallwayWidth;
-       bool last_row_added = false;
+        maxWareHeightInRow = 0;
+        maxRowWidth = hallwayWidth;
+        bool last_row_added = false;
 
-       for(list<int>::iterator j = available_wares.begin(); j != available_wares.end(); j++)
-       {
-           if(min_ware_width > maxRowWidth || currentY + min_ware_height > warehouseHeight)
-               break;
+        for(list<int>::iterator j = available_wares.begin(); j != available_wares.end(); j++)
+        {
+            if(min_ware_width > maxRowWidth || curr.GetY() + min_ware_height > warehouseHeight)
+                break;
 
-           if(wares[*j].getActualWidth() > maxRowWidth || currentY + wares[*j].getActualHeight() > warehouseHeight)
-               continue;
+            if(wares[*j].getActualWidth() > maxRowWidth || curr.GetY() + wares[*j].getActualHeight() > warehouseHeight)
+                continue;
 
-           if(maxWareHeightInRow < wares[*j].getActualHeight())
-               maxWareHeightInRow = wares[*j].getActualHeight();
+            if(maxWareHeightInRow < wares[*j].getActualHeight())
+                maxWareHeightInRow = wares[*j].getActualHeight();
 
-           wares[*j].x = currentX - wares[*j].getActualWidth();
-           wares[*j].y = currentY;
-           wares[*j].fitted = true;
-           currentX = wares[*j].x;
-           maxRowWidth -= wares[*j].getActualWidth();
-           last_row_added = true;
-       }
+            wares[*j].x = curr.GetX() - wares[*j].getActualWidth();
+            wares[*j].y = curr.GetY();
+            wares[*j].fitted = true;
+            curr.SetX(wares[*j].x);
+            maxRowWidth -= wares[*j].getActualWidth();
+            last_row_added = true;
+        }
 
-       if(last_row_added)
-       {
-           list<Point>::iterator i = hallwayVertices.begin();
-           while(i != hallwayVertices.end())
-               if(i->GetY() > currentY)
-                   i = hallwayVertices.erase(i);
-               else
-                   i++;
+        if(last_row_added)
+        {
+            list<Point>::iterator i = hallwayVertices.begin();
+            while(i != hallwayVertices.end())
+                if(i->GetY() > curr.GetY())
+                    i = hallwayVertices.erase(i);
+                else
+                    i++;
 
-           double h2Ey = currentY;
-           double h2Ex = 0;
-           hallwayVertices.push_back(Point(h2Ex,h2Ey));
-       }
-   }
+            double h2Ey = curr.GetY();
+            double h2Ex = 0;
+            hallwayVertices.push_back(Point(h2Ex,h2Ey));
+        }
+    }
 
-   list<Point>::iterator i = hallwayVertices.begin();
-   while(i != hallwayVertices.end())
-       if(!isPointInside(i->GetX(),i->GetY()))
-           i = hallwayVertices.erase(i);
-       else
-           i++;
+    list<Point>::iterator i = hallwayVertices.begin();
+    while(i != hallwayVertices.end())
+        if(!isPointInside(i->GetX(),i->GetY()))
+            i = hallwayVertices.erase(i);
+        else
+            i++;
 }
 
 bool RectangleWarehouse::isPointInside(double x,double y)
@@ -352,6 +408,9 @@ double RectangleWarehouse::GetHallwayArea()
     return hallwayArea;
 }
 
+/*
+ *  Obliczanie pola powierzchni magazynu.
+ */
 double RectangleWarehouse::GetWarehouseArea()
 {
     return warehouseWidth * warehouseHeight;

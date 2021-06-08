@@ -33,7 +33,6 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         population.h
-        population.cpp
         warehouse.h
         warehouse.cpp
         rectanglewarehouse.h
@@ -45,7 +44,6 @@ set(PROJECT_SOURCES
         Ware.h
         Ware.cpp
         Point.h
-        Point.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

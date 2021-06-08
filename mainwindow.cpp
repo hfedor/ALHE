@@ -68,13 +68,6 @@ void MainWindow::on_LineEditA_textChanged(const QString &arg1)
 void MainWindow::on_pushButton_clicked()
 {
     ui->graphicsView->scene()->clear();
-
-    QPolygonF polygon;
-
-    QBrush greenBrush(Qt::green);
-    QBrush blueBrush(Qt::blue);
-    QPen outlinePen(Qt::black);
-    outlinePen.setWidth(2);
 }
 
 
@@ -82,7 +75,6 @@ void MainWindow::on_pushButton_2_clicked()
 {
     ui->graphicsView->scene()->clear();
 
-    QBrush blueBrush(QColor(84, 84, 84, 255));
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
@@ -109,7 +101,7 @@ void MainWindow::on_pushButton_2_clicked()
     for(std::vector<Point>::iterator i = points.begin(); i != points.end(); i++)
     polygon << QPointF(float(20*(*i).GetX()), float(20*(*i).GetY()));
 
-    magazine = scene->addPolygon(polygon, outlinePen, blueBrush);
+    magazine = scene->addPolygon(polygon, outlinePen, QColor(84, 84, 84, 255));
 
     std::vector<Ware> wares = population.GetBest().GetWares();
 
@@ -123,11 +115,11 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    double count = std::atof(ui->waresCountForm->text().toStdString().c_str());
+    int count = std::atoi(ui->waresCountForm->text().toStdString().c_str());
     double width = std::atof(ui->wareWidthForm->text().toStdString().c_str());
     double height = std::atof(ui->wareHeightForm->text().toStdString().c_str());
 
-    if(count <1 || width <1 || height <1) return;
+    if(count < 1 || width < 1 || height < 1) return;
 
     for (int i = 0 ;i < count ; i++)
     {
@@ -135,6 +127,7 @@ void MainWindow::on_pushButton_3_clicked()
 
         waresFromUser.push_back(ware);
     }
+
     this->ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
     QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(count),0);
     ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 0, newItem);
