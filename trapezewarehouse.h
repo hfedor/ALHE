@@ -12,6 +12,7 @@ class TrapezeWarehouse : public Warehouse
     double rightLegA;   // współczynnik A postej zawierającej prawy bok trapeza
     double rightLegB;   // współczynnik B postej zawierającej prawy bok trapeza
     double warehouseHeight; // wysokość trapeza
+    double hallwayX;    // szerokość korytarza na prostej x
 public:
     TrapezeWarehouse(double leftLegA, double rightLegA, double rightLegB, double hallwayWidth, double warehouseHeight);
     static bool compare(TrapezeWarehouse, TrapezeWarehouse);

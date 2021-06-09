@@ -24,11 +24,7 @@ public:
     Warehouse(double hallwayWidth);
     void adaptationFunction();
     double calculateWaresArea();
-     bool compare(Warehouse*);
     bool contains(std::vector<Ware> vector,int id);
-    void initTestSet();
-    void initTestSet2();
-    void initTestSet1x1(int n);
     void initRandom(int n);
     virtual double GetHallwayArea() = 0;
     std::list<Point> GetHallwayVerticles() { return hallwayVertices; }

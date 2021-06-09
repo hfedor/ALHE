@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ALHE VERSION 0.1 LANGUAGES CXX)
+project(ALHE2 VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -28,49 +28,48 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        population.h
-        warehouse.h
-        warehouse.cpp
-        rectanglewarehouse.h
-        rectanglewarehouse.cpp
-        trapezewarehouse.h
-        trapezewarehouse.cpp
-        trianglewarehouse.h
-        trianglewarehouse.cpp
-        Ware.h
-        Ware.cpp
-        Point.h
+    main.cpp
+            mainwindow.cpp
+            mainwindow.h
+            mainwindow.ui
+            population.h
+            warehouse.h
+            warehouse.cpp
+            rectanglewarehouse.h
+            rectanglewarehouse.cpp
+            trapezewarehouse.h
+            trapezewarehouse.cpp
+            trianglewarehouse.h
+            trianglewarehouse.cpp
+            Ware.h
+            Point.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(ALHE
+    qt_add_executable(ALHE2
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 else()
     if(ANDROID)
-        add_library(ALHE SHARED
+        add_library(ALHE2 SHARED
             ${PROJECT_SOURCES}
         )
     else()
-        add_executable(ALHE
+        add_executable(ALHE2
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(ALHE PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(ALHE2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-set_target_properties(ALHE PROPERTIES
+set_target_properties(ALHE2 PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(ALHE)
+    qt_finalize_executable(ALHE2)
 endif()

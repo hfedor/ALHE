@@ -142,7 +142,7 @@ void MainWindow::on_generateButton_clicked()
 {
     ui->graphicsView->scene()->clear();
 
-    scene->addText("Przetwarzanie...", QFont("Arial", 20) );
+    scene->addText("Nie zadano żadnych towarów!", QFont("Arial", 20) );
 
     QPolygonF polygon;
 
@@ -234,10 +234,20 @@ void MainWindow::on_generateButton_clicked()
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
         double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
-        std::string s = to_string(warehouseCoverage);
-        std::string s2 = to_string(hallwayCoverage);
-        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
+        double freespaceCoverage = 100 - (warehouseCoverage + hallwayCoverage);
+        std::string warehouseCoverageStr = to_string(warehouseCoverage);
+        std::string hallwayCoverageStr = to_string(hallwayCoverage);
+        std::string freespaceCoverageStr = to_string(freespaceCoverage);
+        const std::string result_s = "Wyniki - zajętość powierzchni magazynu przez:\n"
+                "\t- towary\t\t\t= " + warehouseCoverageStr + "%\n"
+                "\t- korytarz\t\t\t= " + hallwayCoverageStr + "%\n"
+                "\t- wolną powierzchnię\t\t= " + freespaceCoverageStr + "%\n";
+        ui->resultLabel->setText(QString::fromStdString(result_s));
 
+        QGraphicsTextItem* result_text_p;
+        result_text_p = scene->addText(QString::fromStdString(result_s), QFont("Arial", 12) );
+        result_text_p->setDefaultTextColor(QColor("white"));
+        result_text_p->setPos(0,-90);
     }
     else if(selectedWarehouseShape == 1)
     {
@@ -297,10 +307,20 @@ void MainWindow::on_generateButton_clicked()
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
         double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
-        std::string s = to_string(warehouseCoverage);
-        std::string s2 = to_string(hallwayCoverage);
-        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
+        double freespaceCoverage = 100 - (warehouseCoverage + hallwayCoverage);
+        std::string warehouseCoverageStr = to_string(warehouseCoverage);
+        std::string hallwayCoverageStr = to_string(hallwayCoverage);
+        std::string freespaceCoverageStr = to_string(freespaceCoverage);
+        const std::string result_s = "Wyniki - zajętość powierzchni magazynu przez:\n"
+                "\t- towary\t\t\t= " + warehouseCoverageStr + "%\n"
+                "\t- korytarz\t\t\t= " + hallwayCoverageStr + "%\n"
+                "\t- wolną powierzchnię\t\t= " + freespaceCoverageStr + "%\n";
+        ui->resultLabel->setText(QString::fromStdString(result_s));
 
+        QGraphicsTextItem* result_text_p;
+        result_text_p = scene->addText(QString::fromStdString(result_s), QFont("Arial", 12) );
+        result_text_p->setDefaultTextColor(QColor("white"));
+        result_text_p->setPos(0,-90);
     }
     else if(selectedWarehouseShape == 2)
     {
@@ -359,9 +379,20 @@ void MainWindow::on_generateButton_clicked()
         // wypisywanie wyniku
         double warehouseCoverage = population.GetBest().GetWaresArea()  / population.GetBest().GetWarehouseArea() * 100.0;
         double hallwayCoverage = population.GetBest().GetHallwayArea() / population.GetBest().GetWarehouseArea() * 100.0;
-        std::string s = to_string(warehouseCoverage);
-        std::string s2 = to_string(hallwayCoverage);
-        ui->resultLabel->setText(QString::fromStdString("Wynik:  "+ s + "% zajętej powierzchni\nPowierzchnia korytarza: " + s2 + "%"));
+        double freespaceCoverage = 100 - (warehouseCoverage + hallwayCoverage);
+        std::string warehouseCoverageStr = to_string(warehouseCoverage);
+        std::string hallwayCoverageStr = to_string(hallwayCoverage);
+        std::string freespaceCoverageStr = to_string(freespaceCoverage);
+        const std::string result_s = "Wyniki - zajętość powierzchni magazynu przez:\n"
+                "\t- towary\t\t\t= " + warehouseCoverageStr + "%\n"
+                "\t- korytarz\t\t\t= " + hallwayCoverageStr + "%\n"
+                "\t- wolną powierzchnię\t\t= " + freespaceCoverageStr + "%\n";
+        ui->resultLabel->setText(QString::fromStdString(result_s));
+
+        QGraphicsTextItem* result_text_p;
+        result_text_p = scene->addText(QString::fromStdString(result_s), QFont("Arial", 12) );
+        result_text_p->setDefaultTextColor(QColor("white"));
+        result_text_p->setPos(0,-90);
     }
 }
 

@@ -54,7 +54,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="rectangleWarehouseTab">
           <attribute name="title">
@@ -147,7 +147,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="triangleWarehouseLeftLegAForm"/>
+             <widget class="QLineEdit" name="triangleWarehouseLeftLegAForm">
+              <property name="text">
+               <string>2</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_13">
@@ -157,7 +161,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="triangleWarehouseRightLegAForm"/>
+             <widget class="QLineEdit" name="triangleWarehouseRightLegAForm">
+              <property name="text">
+               <string>-1</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_9">
@@ -167,7 +175,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="triangleWarehouseRightLegBForm"/>
+             <widget class="QLineEdit" name="triangleWarehouseRightLegBForm">
+              <property name="text">
+               <string>30</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -234,7 +246,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>-1</string>
+               <string>-2</string>
               </property>
              </widget>
             </item>
@@ -260,7 +272,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>30</string>
+               <string>50</string>
               </property>
              </widget>
             </item>
@@ -286,7 +298,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>25</string>
+               <string>20</string>
               </property>
              </widget>
             </item>
